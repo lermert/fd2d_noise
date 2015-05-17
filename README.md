@@ -1,4 +1,4 @@
-# fd2d_noise
+# fd2d noise
 tool for testing full waveform ambient noise inversion based on a 2D staggered grid finite difference code for the simulation of seismic wave propagation and adjoint techniques
 
 
