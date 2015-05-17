@@ -1,4 +1,4 @@
-# fd2d
+# fd2d jooooooooooooo
 2D staggered grid finite differences of the wave equation 
 
 
