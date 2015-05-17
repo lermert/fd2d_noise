@@ -60,6 +60,11 @@ STEP 2: Computing the actual kernels
 * The kernel as a function of “X” and “Z” is then in “K_s”.
 * Go to /tools/ and use “plot_noise_source_kernels(X,Z,K_s)” to plot noise source kernels for specific frequency bands.
 
+
+
+
+DON'T USE THAT FOR THE MOMENT, THIS FEATURE WILL BE UPDATED SOON
+
 COMPUTING NOISE STRUCTURE KERNELS
 ---------------------------------------------------------------
 
