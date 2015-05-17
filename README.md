@@ -1,5 +1,3 @@
-hallo hallo
-
 # fd2d
 2D staggered grid finite differences of the wave equation 
 
