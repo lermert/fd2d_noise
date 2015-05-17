@@ -1,6 +1,6 @@
 # fd2d
 2D staggered grid finite differences of the wave equation
-
+test
 
 GENERAL INPUT PARAMETERS: /input/input_parameters.m
 ----------------------------------------------------------------------------------
