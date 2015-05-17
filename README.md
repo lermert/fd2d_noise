@@ -1,5 +1,8 @@
 # fd2d noise
-tool for testing full waveform ambient noise inversion based on a 2D staggered grid finite difference code for the simulation of seismic wave propagation and adjoint techniques
+tool for testing full waveform ambient noise inversion
+
+forward solution: based on a 2D staggered grid finite discretization of the seismic wave equation
+inversion: based on adjoint techniques
 
 
 INPUT PARAMETERS:
