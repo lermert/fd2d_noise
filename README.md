@@ -1,10 +1,11 @@
-# fd2d
-2D staggered grid finite differences of the wave equation 
+# fd2d noise
+tool for testing full waveform ambient noise inversion based on a 2D staggered grid finite difference code for the simulation of seismic wave propagation and adjoint techniques
 
 
-
-GENERAL INPUT PARAMETERS: /input/input_parameters.m
+INPUT PARAMETERS:
 ----------------------------------------------------------------------------------
+
+GENERAL INPUT: /input/input_parameters.m
 
 * size of the computational domain
 * number of grid points
