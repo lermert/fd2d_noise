@@ -2,7 +2,7 @@
 tool for testing full waveform ambient noise inversion
 
 forward solution: based on a 2D staggered grid finite discretization of the seismic wave equation
-inversion: based on adjoint techniques
+inversion: based on adjoint techniques (different adjoint sources)
 
 
 INPUT PARAMETERS:
