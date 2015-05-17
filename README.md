@@ -1,7 +1,6 @@
 # fd2d
-2D staggered rid finite differences of the wave equation
+2D staggered grid finite differences of the wave equation
 
-Die Anleitung:
 
 GENERAL INPUT PARAMETERS: /input/input_parameters.m
 ----------------------------------------------------------------------------------
