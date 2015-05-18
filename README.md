@@ -33,7 +33,7 @@ COMPUTING NOISE CORRELATIONS: /code/calculate_data.m
 ---------------------------------------------------------------------------------------
 * specify the desired noise source in /input/interferometry/make_noise_sources.m
 * make sure that the frequency sampling of the Green's function specified in /input/interferometry/input_interferometry.m is sufficient
-  (if the sampling is too low in the frequency domain, artefacts appear on the correlation source function. trial and error?)
+  (if the sampling is too low in the frequency domain, artifacts appear on the correlation source function. trial and error?)
 * flip_sr is not important for now, but will be for structure kernels
 * define receiver array and which stations will act as reference stations
 * results are saved in array_xx_ref.mat and data_xx_ref.mat with xx="number of reference stations"
@@ -69,7 +69,7 @@ STEP 3: Computing the actual kernels with run_noise_source_kernel.m
 
 FOR DATA-INDEPENDENT KERNELS:
 Without actual data (or at least fake data), one can only compute data-independent adjoint sources, for instance adjoint sources for cross-correlation traveltimes. For this, run “make_adjoint_sources(u,0*u,t,'dis','cc_time_shift’)”. This will compute the adjoint source for cross-correlation time shifts performed on velocity correlations. 
-!!! In this mode, the Green's functions still have to be calculated !!!
+!!! In this mode, the Green's functions have to be computed !!!
 
 
 
