@@ -1,6 +1,11 @@
 # fd2d_noise
 fd2d_noise is a tool to calculate noise correlations and kernels for various misfit measurements. The forward solution is based on a 2D staggered grid finite difference discretization of the seismic wave equation. The kernels form the basis for an iterative inversion procedure.
 
+<<<<<<< HEAD
+=======
+forward solution: based on a 2D staggered grid finite discretization of the seismic wave equation
+inversion: based on adjoint techniques (different adjoint sources)
+>>>>>>> origin/master
 
 
 INPUT PARAMETERS:
