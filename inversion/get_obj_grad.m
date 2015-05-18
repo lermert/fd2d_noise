@@ -4,8 +4,8 @@ function [f,g] = get_obj_grad(x)
     verbose = 'no';
     
     path(path,genpath('../'))
-    load('../output/interferometry/array_16_ref.mat');
-    load('../output/interferometry/data_16_ref.mat');
+    load('../output/interferometry/array_1_ref.mat');
+    load('../output/interferometry/data_1_ref.mat');
     
     if( strcmp(verbose,'yes') )
         fprintf('Start gradient\n')
@@ -44,8 +44,8 @@ function [f,g] = get_obj_grad(x)
     end
     
     % smooth final kernel
-    myfilter = fspecial('gaussian',[75 75], 30);
-    % myfilter = fspecial('gaussian',[40 40], 20);
+    % myfilter = fspecial('gaussian',[75 75], 30);
+    myfilter = fspecial('gaussian',[40 40], 20);
     K_s_all = imfilter(K_s_all, myfilter, 'symmetric');
     g = reshape( sum( K_s_all(:,:,8:33),3 ),[],1);
     

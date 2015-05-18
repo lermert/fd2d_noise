@@ -15,7 +15,6 @@ if (model_type==1)
     
     rho=3000.0*ones(nx,nz);
     mu=4.8e10*ones(nx,nz);
-    % mu=2.7e10*ones(nx,nz);
     
 elseif (model_type==2)
     
@@ -68,14 +67,14 @@ elseif (model_type==6)
     
     rho(98:102,123:127)=rho(98:102,123:127)+2000.0;
     
-elseif (model_type==100)
+elseif (model_type==7)
     
     rho=3000.0*ones(nx,nz);
     mu=ones(nx,nz);
     mu(1:330,:)=3.675e10;
     mu(331:end,:)=2.7e10;
     
-elseif (model_type==999)
+elseif (strcmp(model_type,'picture') )
     
     A = imread('../models/rand.png');
     rho = 3000.0 * ones(nx,nz); 

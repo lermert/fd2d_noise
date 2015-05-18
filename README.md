@@ -1,76 +1,109 @@
-# fd2d noise
-tool for testing full waveform ambient noise inversion
+# fd2d_noise
+fd2d_noise is a tool to calculate noise correlations and kernels for various misfit measurements. The forward solution is based on a 2D staggered grid finite difference discretization of the seismic wave equation. The kernels form the basis for an iterative inversion procedure.
 
-forward solution: based on a 2D staggered grid finite discretization of the seismic wave equation
-inversion: based on adjoint techniques
 
 
 INPUT PARAMETERS:
-----------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------
 
 GENERAL INPUT: /input/input_parameters.m
-
 * size of the computational domain
 * number of grid points
-* length and number of time steps
+* time step and number of time steps
 * finite-difference order
+* model type as defined in /code/propagation/define_material_parameters.m
+  (be careful, some are hardcoded, has to be changed)
 
-* model type as defines in /code/propagation/define_material_parameters.m
+ABSORBING BOUNDARY SPECIFICATIONS: /input/absorb_specs.m
+* width of boundaries
+* on/off switches for each side
 
-* source time function (only relevant for simulation_mode=forward)
+OUTPUT SPECIFICATIONS: /input/output_specs.m
+* adjoint source path
+* verbose switch
+* plot switch
+* movie switch and location
 
-* simulation_mode (type of forward or adjoint simulation)
-
-* source and receiver positions
-
-* absorbing boundaries (where and how wide)
+SOURCE TIME FUNCTION: /input/freq_specs.m
+(only relevant for simulation_mode=forward, useful e.g. for debugging)
+* min and max frequency for source time function
 
 
-COMPUTING NOISE CORRELATIONS
------------------------------------------------------
 
-The computation of noise correlations proceeds in two steps.
+COMPUTING NOISE CORRELATIONS: /code/calculate_data.m
+---------------------------------------------------------------------------------------
+* specify the desired noise source in /input/interferometry/make_noise_sources.m
+* make sure that the frequency sampling of the Green's function specified in /input/interferometry/input_interferometry.m is sufficient
+  (if the sampling is too low in the frequency domain, artefacts appear on the correlation source function. trial and error?)
+* flip_sr is not important for now, but will be for structure kernels
+* define receiver array and which stations will act as reference stations
+* results are saved in array_xx_ref.mat and data_xx_ref.mat with xx="number of reference stations"
 
-STEP 1: Computation of the Green’s function with source at the reference station
-* Edit the simulation parameters in input_parameters.m (domain, time step, receivers, …).
+
+The computation of noise correlations in calculate_data.m basically proceeds in two steps.
+
+STEP 1: Computation of the Green’s function with source at the reference station (simulation_mode=“forward_green”)
 * The source (in earthquake simulations) acts as the reference station in noise correlation simulations.
-* Set the simulation_mode to “forward_green”.
-* Go to /input/interferometry/input_interferometry.m and edit the frequency sampling of the Green’s function. 
-(If the sampling is too low in the frequency domain, then artefacts appear on the correlation source function. Trial and error?)
-* Go to /code/ and run “run_forward()”.
-* This will compute the forward Green’s function.
-* The Fourier transform of the Green’s function is computed on-the-fly, i.e. during the simulation.
-* The Fourier transform is then stored as “G_2.mat” in the directory /output/interferometry/“
+* The Green's function for the reference station is calculated.
+* Its Fourier transform is computed on-the-fly and is stored as “G_2_xx.mat” in the directory /output/interferometry/“.
 
-STEP 2: Computing the actual correlation function
-* Go to /input/interferometry/make_noise_source.m and edit the noise source spectrum and the noise source geometry.
-* Go to /input/input_parameters.m and set the simulation_mode to “correlation”.
-* Go to /code/ and run “[u,t,rec_x,rec_z]=run_forward();” 
-* The resulting correlation functions will be written to “u”. Neither “u” nor “t” are automatically stored!
-* Go to /tools/ and use “plot_recordings(u,t,'vel’)” to plot velocity correlations or “plot_recordings(u,t,’dis’)” to plot displacement correlations.
-
-
-COMPUTING NOISE SOURCE KERNELS
----------------------------------------------------------
-
-The computation of noise source kernels proceeds in two steps, as well.
-
-STEP 1: Make measurements and compute adjoint sources
-* Go to /tools/. Without actual data (or at least fake data), one can only compute data-independent adjoint sources, for instance adjoint sources for cross-correlation traveltimes. For this, run “make_adjoint_sources(u,0*u,t,'vel','cc_time_shift’)”. This will compute the adjoint source for cross-correlation time shifts performed on velocity correlations. These adjoint sources are written to /input/sources/adjoint/.
-
-STEP 2: Computing the actual kernels
-* Go to /input/input_parameters.m and set the simulation_mode to “noise_source_kernel”.
-* Go to /code/ and run “[X,Z,K_s]=run_noise_source_kernel();”.
-* The kernel as a function of “X” and “Z” is then in “K_s”.
-* Go to /tools/ and use “plot_noise_source_kernels(X,Z,K_s)” to plot noise source kernels for specific frequency bands.
+STEP 2: Computing the actual correlation function (simulation_mode=“correlation”)
+* The calculated Green's function together with the specified noise source act as source for the correlation wavefield.
 
 
 
+COMPUTING NOISE SOURCE KERNELS: /code/calculate_kernels.m
+---------------------------------------------------------------------------------------
+* specify "initial" noise source in /input/interferometry/make_noise_sources.m
+* set type to "source"
+* flip_sr is not important for now, but will be for structure kernels
+* load respective array_xx_ref.mat and data_xx_ref.mat
+* choose desired measurement for adjoint source calculation
+* kernel for each reference station are stored in K_s
+* sum is saved in K_s_all, not smoothed
 
-DON'T USE THAT FOR THE MOMENT, THIS FEATURE WILL BE UPDATED SOON
+
+The computation of noise source kernels proceeds in three steps.
+STEP 1: Computation of "initial" correlations (no need to calculate the Green's functions for the reference stations again, if they are still available in /output/interferometry/)
+STEP 2: Measurements and computation of adjoint sources with /tools/make_adjoint_sources.m
+STEP 3: Computing the actual kernels with run_noise_source_kernel.m
+
+FOR DATA-INDEPENDENT KERNELS:
+Without actual data (or at least fake data), one can only compute data-independent adjoint sources, for instance adjoint sources for cross-correlation traveltimes. For this, run “make_adjoint_sources(u,0*u,t,'dis','cc_time_shift’)”. This will compute the adjoint source for cross-correlation time shifts performed on velocity correlations. 
+!!! In this mode, the Green's functions still have to be calculated !!!
+
+
+
+INVERSION FOR NOISE SOURCE DISTRIBUTION: 
+---------------------------------------------------------------------------------------
+GENERAL COMMENT:
+The inversion uses the *_fast.m scripts in /code. These are prepared for conversion to mex-files for a possible speed-up up to a factor of 5. For most set-ups (to my knowledge all set-ups without picture as source distribution or model) the conversion can easily be done with /code/mex_functions/compile.m. If the conversion is successful, _mex has to be appended to run_forward_source_fast(...) and run_noise_source_kernel_fast(...) in get_obj_grad.m (e.g. run_forward_source_fast_mex(...)). The price for the speed-up is that one has to do the conversion after each change of the code. In my opinion it is worth the trouble for playing around with different initial models or different data sets.
+
+RUN INVERSION: /inversion/start_inversion_local.m
+* specify initial model
+* change get_obj_grad.m
+  - load correct array and data for inversion
+  - use desired measurement for adjoint source calculation
+  - specify desired degree of smoothing of gradient in fspecial function
+* the actual inversion uses scripts by Christian Böhm
+
+USAGE ON EULER CLUSTER: /inversion/start_inversion_euler.m
+* before first usage: follow instructions here http://www.clusterwiki.ethz.ch/brutus/Parallel_MATLAB_and_Brutus#LSF_job_pool
+* load matlab module
+* then execute job_start.sh in /inversion
+* follow progress of job with job_watch.sh
+* when the job is done, log files will be save in /inversion/logs/
+
+
+
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+DON'T USE THE STRUCTURE PART FOR THE MOMENT, THIS FEATURE WILL BE UPDATED SOON
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 COMPUTING NOISE STRUCTURE KERNELS
----------------------------------------------------------------
+---------------------------------------------------------------------------------------
 
 The computation of noise structure kernels proceeds in three steps.
 

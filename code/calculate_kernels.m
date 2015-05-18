@@ -6,8 +6,8 @@ path(path,genpath('../'))
 type = 'source';
 flip_sr = 'no';
 
-load('../output/interferometry/array_16_ref.mat')
-load('../output/interferometry/data_16_ref.mat')
+load('../output/interferometry/array_1_ref.mat')
+load('../output/interferometry/data_1_ref.mat')
 
 [Lx,Lz,nx,nz,dt,nt,order,model_type] = input_parameters();
 [width,absorb_left,absorb_right,absorb_top,absorb_bottom] = absorb_specs();
@@ -19,7 +19,9 @@ nr = size(array,1)-1;
 fprintf('\n')
 for i = 1:size(ref_stat,1)
     
-    fprintf('reference station: %i\n',i)
+    if( strcmp(verbose,'yes') )
+        fprintf('reference station: %i\n',i)
+    end
     
     % each reference station will act as a source once
     src = ref_stat(i,:);
@@ -29,8 +31,8 @@ for i = 1:size(ref_stat,1)
     % [~,~] = run_forward('forward_green',src,rec,i,flip_sr);
     [c_uniform( (i-1)*nr + 1 : i*nr , :),t] = run_forward('correlation',src,rec,i,flip_sr);
   
-    % misfit = misfit + make_adjoint_sources(c_uniform( (i-1)*nr+1 : i*nr , :),c_data( (i-1)*nr+1 : i*nr , :),t,'dis','log_amplitude_ratio',src,rec,i,flip_sr);
-    misfit = misfit + make_adjoint_sources(c_uniform( (i-1)*nr+1 : i*nr , :),c_data( (i-1)*nr+1 : i*nr , :),t,'dis','amplitude_difference',src,rec,i,flip_sr);
+    misfit = misfit + make_adjoint_sources(c_uniform( (i-1)*nr+1 : i*nr , :),c_data( (i-1)*nr+1 : i*nr , :),t,'dis','log_amplitude_ratio',src,rec,i,flip_sr);
+    % misfit = misfit + make_adjoint_sources(c_uniform( (i-1)*nr+1 : i*nr , :),c_data( (i-1)*nr+1 : i*nr , :),t,'dis','amplitude_difference',src,rec,i,flip_sr);
     % misfit = misfit + make_adjoint_sources(c_uniform( (i-1)*nr+1 : i*nr , :),c_data( (i-1)*nr+1 : i*nr , :),t,'dis','waveform_difference',src,rec,i,flip_sr);
     % misfit = misfit + make_adjoint_sources(c_uniform( (i-1)*nr+1 : i*nr , :),c_data( (i-1)*nr+1 : i*nr , :),t,'dis','cc_time_shift',src,rec,i,flip_sr);
     
@@ -44,7 +46,6 @@ h(1,:) = plot_recordings_all(c_data,t,'vel','k-',0);
 h(2,:) = plot_recordings_all(c_uniform,t,'vel','r-',0);
 legend(h,'data','uniform')
 
-return
 
 % -------------------------------------------------------------------------
 % calculate kernels
@@ -57,8 +58,10 @@ if( strcmp(type,'source') )
     K_s_all = zeros(nx,nz,length(f_sample));
     fprintf('\n')
     for i = 1:size(ref_stat,1)
-                
-        fprintf('reference station: %i\n',i)
+        
+        if( strcmp(verbose,'yes') )
+            fprintf('reference station: %i\n',i)
+        end
         
         % each reference station will act as a source once
         src = ref_stat(i,:);

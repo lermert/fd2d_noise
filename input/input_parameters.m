@@ -29,8 +29,7 @@ model_type = 1;
 % 4=layered with localised density perturbation
 % 5=different layered medium
 % 6=vertical gradient medium in mu
-% 7=vertical gradient medium in mu with localised density perturbation
-% 8=heterogeneous medium, small horizontal strokes
-% 999 = put source picture in ../models-folder
+% 7=another layered medium
+% "picture" = put source picture in ../models-folder
 
 
