@@ -8,15 +8,15 @@ if strcmp(simulation_mode,'forward_green')
     %- Greens function. So, we integrate by integrating the source time
     %- function.
     
-    stf=1.0e9*ones(1,length(t));
+    stf = 1.0e9*ones(1,length(t));
     
 else
     
     [f_min,f_max] = freq_specs();    
-    stf=zeros(1,length(t));
-    stf(1)=1e9;
-    stf=butterworth_lp(stf,t,5,f_max,'silent');
-    stf=butterworth_hp(stf,t,3,f_min,'silent');
+    stf = zeros(1,length(t));
+    stf(1) = 1e9;
+    stf = butterworth_lp(stf,t,5,f_max,'silent');
+    stf = butterworth_hp(stf,t,3,f_min,'silent');
     
 end
 
