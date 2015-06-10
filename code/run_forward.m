@@ -284,6 +284,11 @@ end
 %- displacement seismograms -----------------------------------------------
 displacement_seismograms = cumsum(velocity_seismograms,2)*dt;
 
+% displacement_seismograms = 0.0*velocity_seismograms;
+% index_zero = find( t==0 );
+% displacement_seismograms(:,1:index_zero) = fliplr( cumsum(fliplr( velocity_seismograms(:,1:index_zero) ),2) ) * (-dt);
+% displacement_seismograms(:,index_zero:end) = cumsum( velocity_seismograms(:,index_zero:end),2) * dt;
+
 
 %- store the movie if wanted ----------------------------------------------
 if strcmp(make_movie,'yes')

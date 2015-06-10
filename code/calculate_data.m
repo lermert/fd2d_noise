@@ -36,14 +36,14 @@ ref_stat = array(1,:);
 
 
 % plot configuration
-% if( strcmp(make_plots,'yes') )
+if( strcmp(make_plots,'yes') )
     figure
     hold on
     plot(array(:,1),array(:,2),'o')
     plot(ref_stat(:,1),ref_stat(:,2),'x')
     xlim([0 Lx])
     ylim([0 Lz])
-% end
+end
 
 
 % calculate correlations

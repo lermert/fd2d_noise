@@ -38,6 +38,7 @@ path(path,'../input/');
 %- convert to velocity if wanted ------------------------------------------
 
 if strcmp(veldis,'vel')
+
     nt=length(t);
     v=zeros(size(u,1),nt-1);
     
@@ -47,7 +48,14 @@ if strcmp(veldis,'vel')
     
     t=t(1:nt-1);
     u=v;
-    
+
+%     v = 0.0*u;
+%     index_zero = find( t==0 );
+%     v(:,2:index_zero) = fliplr( diff(fliplr( u(:,1:index_zero) ),1,2) ) / dt; 
+%     v(:,index_zero:end-1) = diff( u(:,index_zero:end),1,2 ) / dt; 
+%     
+%     u = v;
+
 end
 
 %- plot recordings with ascending distance from the first source ----------
