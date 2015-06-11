@@ -175,7 +175,6 @@ K_rho = zeros(nx,nz);
 K_mu = zeros(nx-1,nz-1);
 for k=1:length(w_sample)
     K_rho = K_rho - G_1(:,:,k) .* C_2(:,:,k)*dw;
-    
     K_mu = K_mu +  G_1_strain_dxv(:,:,k) .* C_2_strain_dxv(:,:,k)*dw + G_1_strain_dzv(:,:,k) .* C_2_strain_dzv(:,:,k)*dw;
 end
 

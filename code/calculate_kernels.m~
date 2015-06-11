@@ -9,7 +9,7 @@ path(path,genpath('../'))
 % type = 'source';
 type = 'structure';
 
-measurement = 4;
+measurement = 1;
 % 1 = 'log_amplitude_ratio';
 % 2 = 'amplitude_difference';
 % 3 = 'waveform_difference';
@@ -119,11 +119,10 @@ elseif( strcmp(type,'structure') )
         src = ref_stat(i,:);
         rec = array( find(~ismember(array,src,'rows') ) , :);
         
-        % calculate first structure kernel
+  
         flip_sr = 'no';
         [~,~,K_rho_1,K_mu_1] = run_noise_structure_kernel('noise_structure_kernel',i,flip_sr);
         
-        % calculate second part of structure kernel
         flip_sr = 'yes';
         [~,~] = run_forward('forward_green',src,rec,i,flip_sr);
         [c_uniform_2( (i-1)*nr + 1 : i*nr , :),t] = run_forward('correlation',src,rec,i,flip_sr);
@@ -142,16 +141,27 @@ elseif( strcmp(type,'structure') )
                 error('\nspecify correct measurement!\n\n')
         end
         
-        % calculate second structure kernel
-        [X,Z,K_rho_2,K_mu_2] = run_noise_structure_kernel('noise_structure_kernel',i,flip_sr);        
+        [X,Z,K_rho_2,K_mu_2] = run_noise_structure_kernel('noise_structure_kernel',i,flip_sr);
+        
         
         % sum kernels
         K_rho_uniform = K_rho_1 + K_rho_2;        
-        K_mu_uniform = K_mu_1 + K_mu_2;        
+        K_mu_uniform = K_mu_1 + K_mu_2;
         
-        % plot kernels        
-        plot_noise_structure_kernels_test
-        % plot_noise_structure_kernels(X,Z,K_rho_uniform)
+        
+        % plot kernels
+        plot_noise_structure_kernels(X,Z,K_rho_uniform)
+        
+        figure
+        pcolor(K_mu_uniform')
+        shading interp
+        shading interp
+        cm = cbrewer('div','RdBu',100,'PCHIP');
+        colormap(cm)
+        colorbar
+        m=max(max(abs(K_mu_1'+K_mu_2')));
+        caxis([-m m])
+        axis equal
         
     end
     

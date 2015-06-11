@@ -66,12 +66,10 @@ end
 %==========================================================================
 
 misfit = 0.0;
-adstf = zeros(n_receivers,nt);
+adstf = zeros(1,nt);
 for n=1:n_receivers
    
-    if( strcmp(verbose,'yes') )
-        fprintf(1,'station number %d\n',n)
-    end
+    fprintf(1,'station number %d\n',n)
     
     %- plot traces --------------------------------------------------------    
     plot(t,u(n,:),'k')
@@ -86,10 +84,10 @@ for n=1:n_receivers
    
     
     %- select time windows and taper seismograms --------------------------   
-    % disp('select left window');
-    % [left,~] = ginput(1)
-    % disp('select_right_window');
-    % [right,~] = ginput(1)
+%     disp('select left window');
+%     [left,~] = ginput(1)
+%     disp('select_right_window');
+%     [right,~] = ginput(1)
     
     if strcmp(measurement,'waveform_difference')
         left = t(1);
@@ -100,8 +98,8 @@ for n=1:n_receivers
         left = distance/4000.0 - 25.0;
         right = distance/4000.0 + 25.0;
         
-        % left = -distance/4000.0 - 25.0;
-        % right = -distance/4000.0 + 25.0;
+%         left = -distance/4000.0 - 25.0;
+%         right = -distance/4000.0 + 25.0;
         
         if( left < 0 )
             index = find( t==0 );
@@ -119,9 +117,12 @@ for n=1:n_receivers
     
     %- compute misfit and adjoint source time function --------------------    
     if strcmp(measurement,'waveform_difference')
-        [misfit_n,adstf(n,:)] = waveform_difference(u_sel,u_0_sel,t);
+        [misfit_n,adstf(1,:)] = waveform_difference(u_sel,u_0_sel,t);
         
     elseif strcmp(measurement,'cc_time_shift')
+        adstf_caus = zeros(1,nt);
+        adstf_acaus = zeros(1,nt);
+        
         [misfit_n_caus,adstf_caus(1,:)] = cc_time_shift(u_sel,u_0_sel,t);
         
         tmp = left;
@@ -132,11 +133,15 @@ for n=1:n_receivers
         u_sel = taper(u(n,:),t,left,right,width);
         u_0_sel = taper(u_0(n,:),t,left,right,width);
         
-        [misfit_n_acaus,adstf_acaus(1,:)] = cc_time_shift(u_sel,u_0_sel,t);        
-        misfit_n = misfit_n_caus + misfit_n_acaus;
-        adstf(n,:) = adstf_caus + adstf_acaus;
+        [misfit_n_acaus,adstf_acaus(1,:)] = cc_time_shift(u_sel,u_0_sel,t);
         
-    elseif strcmp(measurement,'amplitude_difference')        
+        misfit_n = misfit_n_caus + misfit_n_acaus;
+        adstf = adstf_caus + adstf_acaus;
+        
+    elseif strcmp(measurement,'amplitude_difference')
+        adstf_caus = zeros(1,nt);
+        adstf_acaus = zeros(1,nt);
+        
         [misfit_n_caus,adstf_caus(1,:)] = amp_diff(u_sel,u_0_sel,t);
         
         tmp = left;
@@ -147,9 +152,10 @@ for n=1:n_receivers
         u_sel = taper(u(n,:),t,left,right,width);
         u_0_sel = taper(u_0(n,:),t,left,right,width);
         
-        [misfit_n_acaus,adstf_acaus(1,:)] = amp_diff(u_sel,u_0_sel,t);        
+        [misfit_n_acaus,adstf_acaus(1,:)] = amp_diff(u_sel,u_0_sel,t);
+        
         misfit_n = misfit_n_caus + misfit_n_acaus;
-        adstf(n,:) = adstf_caus + adstf_acaus;
+        adstf = adstf_caus + adstf_acaus;
         
     elseif strcmp(measurement,'log_amplitude_ratio')
         win = get_window(t,left,right,'hann');
@@ -163,7 +169,7 @@ for n=1:n_receivers
     
     %- correct adjoint source time function for velocity measurement ------    
     if strcmp(veldis,'vel')
-        adstf(n,1:nt-1) = -diff(adstf(n,:))/dt;
+        adstf(n,1:nt-1) = -diff(adstf(1,:))/dt;
     end
     
 

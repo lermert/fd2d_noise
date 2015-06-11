@@ -27,6 +27,7 @@ make_noise_source
 
 
 %- plot noise distribution- -----------------------------------------------
+figure
 noise_strength = max(max(abs(noise_source_distribution(:,:,1)-1)));
 for i=length(n_noise_sources)
     dist = pcolor(X,Z,(noise_source_distribution(:,:,i)-1)'/noise_strength);
