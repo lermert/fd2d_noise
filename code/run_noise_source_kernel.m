@@ -41,13 +41,12 @@ nt=length(t);
 
 %- read adjoint source locations ------------------------------------------
 fid=fopen([adjoint_source_path 'source_locations_' num2str(i_ref)],'r');
-adsrc_x = zeros(1);
-adsrc_z = zeros(1);
 
+adsrc = zeros(1,1);
 k = 1;
 while (feof(fid)==0)
-    adsrc_x(k) = fscanf(fid,'%g',1);
-    adsrc_z(k) = fscanf(fid,'%g',1);
+    adsrc(k,1) = fscanf(fid,'%g',1);
+    adsrc(k,2) = fscanf(fid,'%g',1);
     fgetl(fid);
     k = k+1;
 end
@@ -56,7 +55,7 @@ fclose(fid);
 
 
 %- read adjoint source time functions -------------------------------------
-ns = length(adsrc_x);
+ns = size(adsrc,1);
 stf = zeros(ns,nt);
 
 for n=1:ns
@@ -67,12 +66,10 @@ end
     
 
 %- compute indices for adjoint source locations ---------------------------    
-adsrc_x_id = zeros(1,ns);
-adsrc_z_id = zeros(1,ns);
-
+adsrc_id = zeros(ns,2);
 for i=1:ns
-    adsrc_x_id(i) = min(find(min(abs(x-adsrc_x(i)))==abs(x-adsrc_x(i))));
-    adsrc_z_id(i) = min(find(min(abs(z-adsrc_z(i)))==abs(z-adsrc_z(i))));
+    adsrc_id(i,1) = min( find( min(abs(x-adsrc(i,1))) == abs(x-adsrc(i,1)) ) );
+    adsrc_id(i,2) = min( find( min(abs(z-adsrc(i,2))) == abs(z-adsrc(i,2)) ) );
 end
 
 
@@ -113,7 +110,7 @@ for n=1:length(t)
     
     %- add point sources --------------------------------------------------    
     for i=1:ns
-        DS(adsrc_x_id(i),adsrc_z_id(i)) = DS(adsrc_x_id(i),adsrc_z_id(i)) + stf(i,n);
+        DS(adsrc_id(i,1),adsrc_id(i,2)) = DS(adsrc_id(i,1),adsrc_id(i,2)) + stf(i,n);
     end
     
     

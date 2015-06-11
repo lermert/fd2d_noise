@@ -17,7 +17,7 @@ bandwidth = 0.03;            % bandwidth in Hz
 %- Geographic distribution of sources -------------------------------------
 %- Location and width of a Gaussian 'blob' --------------------------------
 x_sourcem = 1.0e5;
-z_sourcem = 2.0e5;
+z_sourcem = 2.5e5;
 sourcearea_width = 0.4e5;
 
 x_source_r = 2.0e5;

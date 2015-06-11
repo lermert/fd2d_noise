@@ -110,8 +110,7 @@ elseif strcmp(simulation_mode,'correlation')
     
     
     %- Fourier transform of strain field
-    C_2_strain_dxv = zeros(nx-1,nz-1,length(f_sample)) + 1i*zeros(nx-1,nz-1,length(f_sample));
-    C_2_strain_dzv = zeros(nx-1,nz-1,length(f_sample)) + 1i*zeros(nx-1,nz-1,length(f_sample));
+    C_2_strain_ = zeros(nx,nz,length(f_sample)) + 1i*zeros(nx,nz,length(f_sample));
     
     
     %- load frequency-domain Greens function
@@ -196,12 +195,12 @@ for n = 1:length(t)
                 % S(:,:,ns) = S(:,:,ns) + noise_spectrum(k,ns) * conj(G_2(:,:,k)) * exp( 1i*w_sample(k)*t(n) );
                 S(:,:,ns) = S(:,:,ns) + noise_spectrum(k,ns) * G_2(:,:,k) * ifft_coeff(n,k);
             end
-            % S(:,:,ns) = dw*S(:,:,ns)/pi; 
+            % S(:,:,ns) = dw*S(:,:,ns)/pi;                                  % eigentlich Faktor 1/(2*pi) ?
             
             t_ifft = t_ifft + toc(t_ifft_start);
             
             %- add sources
-            DS = DS + noise_source_distribution(:,:,ns) .* real(S(:,:,ns));
+            DS = DS + noise_source_distribution(:,:,ns) .* real(S(:,:,ns)); % räumliche Term ist soz. eine Skalierung der Amplitude der Zeitfunktion des Noise
             
         end
            
@@ -216,12 +215,9 @@ for n = 1:length(t)
     v = v.*absbound;
     
     
-    %- compute derivatives of current velocity and update stress tensor ---
-    strain_dxv = dx_v(v,dx,dz,nx,nz,order);
-    strain_dzv = dz_v(v,dx,dz,nx,nz,order);
-    
-    sxy = sxy + dt*mu(1:nx-1,:) .* strain_dxv;
-    szy = szy + dt*mu(:,1:nz-1) .* strain_dzv;
+    %- compute derivatives of current velocity and update stress tensor ---    
+    sxy = sxy + dt*mu(1:nx-1,:) .* dx_v(v,dx,dz,nx,nz,order);
+    szy = szy + dt*mu(:,1:nz-1) .* dz_v(v,dx,dz,nx,nz,order);
     
     
     %- record velocity seismograms ----------------------------------------    
@@ -251,8 +247,8 @@ for n = 1:length(t)
             % C_2(:,:,k) = C_2(:,:,k) + v(:,:) * exp(-1i*w_sample(k)*t(n))*dt;
             C_2(:,:,k) = C_2(:,:,k) + v(:,:) * fft_coeff(n,k);
             
-            C_2_strain_dxv(:,:,k) = C_2_strain_dxv(:,:,k) + strain_dxv(:,1:end-1) * fft_coeff(n,k);
-            C_2_strain_dzv(:,:,k) = C_2_strain_dzv(:,:,k) + strain_dzv(1:end-1,:) * fft_coeff(n,k);
+            C_2_strain(:,:,k,1) = C_2_strain(:,:,k,1) + dx_v(v,dx,dz,nx,nz,order) * fft_coeff(n,k);
+            C_2_strain(:,:,k,2) = C_2_strain(:,:,k,2) + dz_v(v,dx,dz,nx,nz,order) * fft_coeff(n,k);
         end
         
         t_fft = t_fft + toc(t_fft_start);
@@ -286,12 +282,10 @@ end
 if strcmp(simulation_mode,'correlation')
     if( strcmp(flip_sr,'no') )
         save(['../output/interferometry/C_2_' num2str(i_ref) '.mat'],'C_2');
-        save(['../output/interferometry/C_2_strain_dxv_' num2str(i_ref) '.mat'],'C_2_strain_dxv');
-        save(['../output/interferometry/C_2_strain_dzv_' num2str(i_ref) '.mat'],'C_2_strain_dzv');
+        save(['../output/interferometry/C_2_strain_' num2str(i_ref) '.mat'],'C_2_strain');
     else
         save(['../output/interferometry/C_2_flip_sr'  num2str(i_ref) '.mat'],'C_2');
-        save(['../output/interferometry/C_2_strain_dxv_flip_sr'  num2str(i_ref) '.mat'],'C_2_strain_dxv');
-        save(['../output/interferometry/C_2_strain_dzv_flip_sr'  num2str(i_ref) '.mat'],'C_2_strain_dzv');
+        save(['../output/interferometry/C_2_strain_flip_sr'  num2str(i_ref) '.mat'],'C_2_strain');
     end
 end
 

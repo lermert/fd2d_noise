@@ -129,19 +129,18 @@ for n=1:length(t)
     
     
     %- compute derivatives of current velocity and update stress tensor ---
-    strain_dxv = dx_v(v,dx,dz,nx,nz,order);
-    strain_dzv = dz_v(v,dx,dz,nx,nz,order);
+    strain_dxv
     
-    sxy = sxy + dt*mu(1:nx-1,:) .* strain_dxv;
-    szy = szy + dt*mu(:,1:nz-1) .* strain_dzv;
+    sxy = sxy + dt*mu(1:nx-1,:) .* dx_v(v,dx,dz,nx,nz,order);
+    szy = szy + dt*mu(:,1:nz-1) .* dz_v(v,dx,dz,nx,nz,order);
      
     
     %- accumulate Fourier transform of the velocity field -----------------
     if( mod(n,5) == 1 )
         for k=1:length(w_sample)
             G_1(:,:,k) = G_1(:,:,k) + v(:,:) * exp(-1i*w_sample(k)*t(n)) * dt;            
-            G_1_strain_dxv(:,:,k) = G_1_strain_dxv(:,:,k) + strain_dxv(:,1:end-1) * exp(-1i*w_sample(k)*t(n)) * dt;
-            G_1_strain_dzv(:,:,k) = G_1_strain_dzv(:,:,k) + strain_dzv(1:end-1,:) * exp(-1i*w_sample(k)*t(n)) * dt;
+            G_1_strain_dxv(:,:,k) = G_1_strain_dxv(:,:,k) + dx_v(v,dx,dz,nx,nz,order) * exp(-1i*w_sample(k)*t(n)) * dt;
+            G_1_strain_dzv(:,:,k) = G_1_strain_dzv(:,:,k) + dz_v(v,dx,dz,nx,nz,order) * exp(-1i*w_sample(k)*t(n)) * dt;
         end
     end
     
@@ -172,11 +171,11 @@ end
 
 %- accumulate kernel by looping over frequency
 K_rho = zeros(nx,nz);
-K_mu = zeros(nx-1,nz-1);
+K_mu = zeros(nx-1,nz);
 for k=1:length(w_sample)
     K_rho = K_rho - G_1(:,:,k) .* C_2(:,:,k)*dw;
     
-    K_mu = K_mu +  G_1_strain_dxv(:,:,k) .* C_2_strain_dxv(:,:,k)*dw + G_1_strain_dzv(:,:,k) .* C_2_strain_dzv(:,:,k)*dw;
+    K_mu = K_mu +  G_1_strain_dxv(:,:,k) .* C_2_strain_dxv(:,:,k)*dw; % + G_1_strain_dzv(:,:,k) .* C_2_strain_dzv(:,:,k)*dw;
 end
 
 K_rho = real(K_rho);
