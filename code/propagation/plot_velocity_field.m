@@ -38,15 +38,15 @@ if (mod(n,plot_nt)==0)
     
     
     %- plot source and receiver positions ---------------------------------
-    if ( ~strcmp(simulation_mode,'noise_source_kernel') && ~strcmp(simulation_mode,'noise_source_kernel') )
-        for k=1:size(src,1)
-            plot(src(k,1),src(k,2),'kx')
-        end
-        
-        for k=1:size(rec,1)
-            plot(rec(k,1),rec(k,2),'ko')
-        end
-    end
+    % if ( ~strcmp(simulation_mode,'noise_source_kernel') && ~strcmp(simulation_mode,'noise_source_kernel') )
+    %     for k=1:size(src,1)
+    %         plot(src(k,1),src(k,2),'kx')
+    %     end
+    %     
+    %     for k=1:size(rec,1)
+    %         plot(rec(k,1),rec(k,2),'ko')
+    %     end
+    % end
        
     
     %- record movie -------------------------------------------------------

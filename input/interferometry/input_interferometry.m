@@ -13,6 +13,6 @@ function [f_sample] = input_interferometry()
 
 %- It is sufficient to consider the positive frequency axis. 
 
-f_sample=0.05:0.001:0.2;
+% f_sample=0.05:0.004:0.2;
 
-% f_sample=0.05:0.002:0.2;
+f_sample=0.05:0.002:0.2;

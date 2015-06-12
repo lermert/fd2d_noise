@@ -1,7 +1,10 @@
 
+clear all
 close all
 
-path(path,genpath('../'))
+tic
+
+addpath(genpath('../'))
 flip_sr = 'no';
 
 [Lx,Lz,nx,nz,dt,nt,order,model_type] = input_parameters();
@@ -25,6 +28,7 @@ nr_z = 1;
 array = zeros(nr_x*nr_z,2);
 for i = 1:nr_x
         array( i, 1 ) = Lx/2 + (-1)^i * 0.15*Lx;
+        % array( i, 1 ) = Lx/2 + (-1)^i * 0.08*Lx - Lx/5;
         array( i, 2 ) = Lz/2;
 end
 
@@ -43,6 +47,7 @@ if( strcmp(make_plots,'yes') )
     plot(ref_stat(:,1),ref_stat(:,2),'x')
     xlim([0 Lx])
     ylim([0 Lz])
+    drawnow
 end
 
 
@@ -75,4 +80,9 @@ legend('data')
 % save array and data for inversion
 save(sprintf('../output/interferometry/array_%i_ref.mat',size(ref_stat,1)),'array','ref_stat')
 save(sprintf('../output/interferometry/data_%i_ref.mat',size(ref_stat,1)),'c_data','t')
+
+rmpath(genpath('../'))
+
+
+toc
 
