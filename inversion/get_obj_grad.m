@@ -29,8 +29,8 @@ function [f,g] = get_obj_grad(x)
         indices = (i-1)*size(rec,1) + 1 : i*size(rec,1);
         
         [c_it,t] = run_forward_source_fast( G_2.G_2, x, rec );
-        [f_n,adstf] = make_adjoint_sources_inversion( c_it, c_data(indices,:), t, 'dis', 'log_amplitude_ratio', src, rec );
-        % [f_n,adstf] = make_adjoint_sources_inversion( c_it, c_data(indices,:), t, 'dis', 'amplitude_difference', src, rec );
+        % [f_n,adstf] = make_adjoint_sources_inversion( c_it, c_data(indices,:), t, 'dis', 'log_amplitude_ratio', src, rec );
+        [f_n,adstf] = make_adjoint_sources_inversion( c_it, c_data(indices,:), t, 'dis', 'amplitude_difference', src, rec );
         % [f_n,adstf] = make_adjoint_sources_inversion( c_it, c_data(indices,:), t, 'dis', 'waveform_difference', src, rec );
         % [f_n,adstf] = make_adjoint_sources_inversion( c_it, c_data(indices,:), t, 'dis', 'cc_time_shift', src, rec );
         [~,~,K_s] = run_noise_source_kernel_fast(G_2.G_2,adstf,rec);
