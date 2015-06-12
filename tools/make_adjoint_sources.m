@@ -86,10 +86,10 @@ for n=1:n_receivers
    
     
     %- select time windows and taper seismograms --------------------------   
-    % disp('select left window');
-    % [left,~] = ginput(1)
-    % disp('select_right_window');
-    % [right,~] = ginput(1)
+%     disp('select left window');
+%     [left,~] = ginput(1)
+%     disp('select_right_window');
+%     [right,~] = ginput(1)
     
     if strcmp(measurement,'waveform_difference')
         left = t(1);

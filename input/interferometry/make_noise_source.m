@@ -20,11 +20,11 @@ x_sourcem = 1.0e5;
 z_sourcem = 2.3e5;
 sourcearea_width = 0.4e5;
 
-x_source_r = 2.0e5;
-z_source_r = 2.0e5;
-radius = 1.4e5;
-thickness = 40000;
-angle_cover = 40.0;
+x_source_r = 1.0e6;
+z_source_r = 1.0e6;
+radius = 6.8e5;
+thickness = 1e5;
+angle_cover = 90.0;
 taper_width = 20;
 taper_strength = 100;
 
@@ -53,23 +53,23 @@ end
 % source spectrum
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-noise_spectrum=zeros(length(f_sample),n_noise_sources);
+noise_spectrum = zeros(length(f_sample),n_noise_sources);
 
 %- spectrum for source regions --------------------------------------------
 for i=1:n_noise_sources
-    noise_spectrum(:,i)=1/(n_noise_sources-i+1)*exp(-(abs(f_sample)-f_peak(i)).^2/bandwidth(i)^2);
+    noise_spectrum(:,i) = 1/(n_noise_sources-i+1)*exp(-(abs(f_sample)-f_peak(i)).^2/bandwidth(i)^2);
     
-    if ( strcmp(standalone,'yes') )
-        if(i==1)
-            figure
-            % set(gca,'FontSize',20)
-            hold on
-        end
-        
-        plot(f_sample,noise_spectrum(:,i),'k');
-        xlabel('frequency [Hz]');
-        % title(sprintf('noise power-spectral density for noise source %i',i))
-    end
+%     if ( strcmp(standalone,'yes') )
+%         if(i==1)
+%             figure
+%             % set(gca,'FontSize',20)
+%             hold on
+%         end
+%         
+%         plot(f_sample,noise_spectrum(:,i),'k');
+%         xlabel('frequency [Hz]');
+%         % title(sprintf('noise power-spectral density for noise source %i',i))
+%     end
 end
 
 
@@ -77,9 +77,7 @@ end
 % geographic power-spectral density distribution
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-noise_source_distribution=zeros(nx,nz,n_noise_sources);
-
-noise_source_distribution(:,:,:) = 1.0;
+noise_source_distribution = zeros(nx,nz,n_noise_sources);
 
 %- if distribution homogeneous
 if sources_everywhere == true
@@ -97,24 +95,22 @@ else
 %         
 %         R = ( (X-x_source_r(i)).^2 + (Z-z_source_r(i)).^2 ).^(1/2);        
 %         angle = atan( abs( X-x_source_r(i) )./abs(Z-z_source_r(i)) ) *180/pi;
-%         [k,l]=find(isnan(angle));
+%         
+%         [k,l] = find(isnan(angle));
 %         angle(k,l) = 10;
 %         
-% %         pcolor(X,Z,R')
-% %         shading interp
-% %         colorbar
-%         
 %         if( angle_cover == 90 )
-%             noise_source_distribution(:,:,i) = double(R > (radius-+thickness/2) & R < (radius+thickness/2) & angle <= angle_cover);
+%             % noise_source_distribution(:,:,i) = ( double(R > (radius-thickness/2) & R < (radius+thickness/2) ) )';
+%             noise_source_distribution(:,:,i) = (exp( -abs( R-radius ).^2/9e8 ) .* double(R > (radius-thickness/2) & R < (radius+thickness/2) ) )';
 %         else
-%             noise_source_distribution(:,:,i) = exp( -(angle-(angle_cover-taper_width)).^2/(taper_strength) .* double( angle>angle_cover-taper_width & angle<angle_cover ) ) .* double( R > (radius-+thickness/2) & R < (radius+thickness/2) & angle <= angle_cover ) ;
+%             noise_source_distribution(:,:,i) = exp( -(angle-(angle_cover-taper_width)).^2/(taper_strength) .* double( angle>angle_cover-taper_width & angle<angle_cover ) ) .* double( R > (radius-+thickness/2) & R < (radius+thickness/2) & angle <= angle_cover )' ;
 %         end
 %         
 %     end
     
- 
+    noise_source_distribution(:,:,:) = 1.0;
     for i=1:n_noise_sources        
-        noise_source_distribution(:,:,i) = noise_source_distribution(:,:,i) + 3.0*( exp( -( (X-x_sourcem(i)).^2 + (Z-z_sourcem(i)).^2 ) / (sourcearea_width(i))^2 ) )';        
+        noise_source_distribution(:,:,i) = noise_source_distribution(:,:,i) + 5.0*( exp( -( (X-x_sourcem(i)).^2 + (Z-z_sourcem(i)).^2 ) / (sourcearea_width(i))^2 ) )';        
     end
     
 end
