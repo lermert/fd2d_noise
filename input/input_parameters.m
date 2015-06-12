@@ -15,10 +15,10 @@ dt = 0.09;          % time step [s]
 nt = 900;           % number of iterations
 
 
-% Lx = 2.0e6;         % model extension in x-direction [m]
+% Lx = 2.5e6;         % model extension in x-direction [m]
 % Lz = 2.0e6;         % model extension in y-direction [m]
 % 
-% nx = 600;           % grid points in x-direction
+% nx = 750;           % grid points in x-direction
 % nz = 600;           % grid points in z-direction
 % 
 % dt = 0.23;          % time step [s]

@@ -15,7 +15,7 @@ function [X,Z,K_rho,K_mu]=run_noise_structure_kernel(simulation_mode,i_ref,flip_
 %==========================================================================
 
 path(path,genpath('../'));
-cm = cbrewer('div','RdBu',100,'PCHIP');
+load cm_velocity;
 
 
 %==========================================================================
@@ -84,8 +84,8 @@ w_sample = 2*pi*f_sample;
 dw = w_sample(2) - w_sample(1);
 
 G_1 = zeros(nx,nz,length(f_sample)) + + 1i*zeros(nx,nz,length(f_sample));
-G_1_strain_dxv = zeros(nx-1,nz,length(f_sample)) + 1i*zeros(nx-1,nz,length(f_sample));
-G_1_strain_dzv = zeros(nx,nz-1,length(f_sample)) + 1i*zeros(nx,nz-1,length(f_sample));
+G_1_strain_dxv = zeros(nx-1,nz-1,length(f_sample)) + 1i*zeros(nx-1,nz-1,length(f_sample));
+G_1_strain_dzv = zeros(nx-1,nz-1,length(f_sample)) + 1i*zeros(nx-1,nz-1,length(f_sample));
             
 
 %- dynamic fields and absorbing boundary field ----------------------------
@@ -140,8 +140,8 @@ for n=1:length(t)
     if( mod(n,5) == 1 )
         for k=1:length(w_sample)
             G_1(:,:,k) = G_1(:,:,k) + v(:,:) * exp(-1i*w_sample(k)*t(n)) * dt;            
-            G_1_strain_dxv(:,:,k) = G_1_strain_dxv(:,:,k) + strain_dxv(:,:) * exp(-1i*w_sample(k)*t(n)) * dt;
-            G_1_strain_dzv(:,:,k) = G_1_strain_dzv(:,:,k) + strain_dzv(:,:) * exp(-1i*w_sample(k)*t(n)) * dt;
+            G_1_strain_dxv(:,:,k) = G_1_strain_dxv(:,:,k) + strain_dxv(:,1:end-1) * exp(-1i*w_sample(k)*t(n)) * dt;
+            G_1_strain_dzv(:,:,k) = G_1_strain_dzv(:,:,k) + strain_dzv(1:end-1,:) * exp(-1i*w_sample(k)*t(n)) * dt;
         end
     end
     
@@ -172,13 +172,10 @@ end
 
 %- accumulate kernel by looping over frequency
 K_rho = zeros(nx,nz);
-K_mu = zeros(nx,nz);
+K_mu = zeros(nx-1,nz-1);
 for k=1:length(w_sample)
-    K_rho = K_rho - G_1(:,:,k) .* C_2(:,:,k) * dw;
-    
-    % both is still in velocity
-    K_mu(1:nx-1,:) = K_mu(1:nx-1,:) - G_1_strain_dxv(:,:,k) .* C_2_strain_dxv(:,:,k) / w_sample(k)^2 * dw;
-    K_mu(:,1:nz-1) = K_mu(:,1:nz-1) - G_1_strain_dzv(:,:,k) .* C_2_strain_dzv(:,:,k) / w_sample(k)^2 * dw;
+    K_rho = K_rho - G_1(:,:,k) .* C_2(:,:,k)*dw;
+    K_mu = K_mu +  G_1_strain_dxv(:,:,k) .* C_2_strain_dxv(:,:,k)*dw + G_1_strain_dzv(:,:,k) .* C_2_strain_dzv(:,:,k)*dw;
 end
 
 K_rho = real(K_rho);
