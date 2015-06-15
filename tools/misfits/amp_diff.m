@@ -16,15 +16,15 @@ if sum(u_0==0) == length(t)
     
     % not sure about that    
     misfit = 1.0;
-    adstf = fliplr(u) / ( sum(u.^2)*dt ) / pi;
+    adstf = 2 * fliplr(u) / ( sum(u.^2)*dt ); % / pi;
     
 else
     
     measurement = ( sum( u.^2 ) - sum( u_0.^2 ) ) / sum( u_0.^2 );
     
-    % take L2 norm as misfit
-    misfit = measurement^2 / 2 ;
+    % take L2 norm of measurement as misfit
+    misfit = measurement^2 / 2;
     
-    adstf = measurement * fliplr(u) / ( sum(u_0.^2)*dt ) / pi;
+    adstf = 2 * measurement * fliplr(u) / ( sum(u_0.^2)*dt ); % / pi;
     
 end

@@ -14,7 +14,7 @@ function [f,g] = get_obj_grad(x)
     f = 0;
     f_sample = input_interferometry();
     K_s_all = zeros(300,300,length(f_sample));
-    parfor i = 1:size(ref_stat,1)
+    for i = 1:size(ref_stat,1)
         
         if( strcmp(verbose,'yes') )
             fprintf('reference station: %i\n',i)
@@ -30,9 +30,9 @@ function [f,g] = get_obj_grad(x)
         
         [c_it,t] = run_forward_source_fast( G_2.G_2, x, rec );
         % [f_n,adstf] = make_adjoint_sources_inversion( c_it, c_data(indices,:), t, 'dis', 'log_amplitude_ratio', src, rec );
-        [f_n,adstf] = make_adjoint_sources_inversion( c_it, c_data(indices,:), t, 'dis', 'amplitude_difference', src, rec );
+        % [f_n,adstf] = make_adjoint_sources_inversion( c_it, c_data(indices,:), t, 'dis', 'amplitude_difference', src, rec );
         % [f_n,adstf] = make_adjoint_sources_inversion( c_it, c_data(indices,:), t, 'dis', 'waveform_difference', src, rec );
-        % [f_n,adstf] = make_adjoint_sources_inversion( c_it, c_data(indices,:), t, 'dis', 'cc_time_shift', src, rec );
+        [f_n,adstf] = make_adjoint_sources_inversion( c_it, c_data(indices,:), t, 'dis', 'cc_time_shift', src, rec );
         [~,~,K_s] = run_noise_source_kernel_fast(G_2.G_2,adstf,rec);
         
         % sum all kernels
@@ -40,6 +40,7 @@ function [f,g] = get_obj_grad(x)
         
         % sum up misfits
         f = f + f_n;
+        fprintf('misfit: %f\n',f)
         
     end
     

@@ -8,10 +8,10 @@ tic
 % user input
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% type = 'source';
-type = 'structure';
+type = 'source';
+% type = 'structure';
 
-measurement = 4;
+measurement = 2;
 % 1 = 'log_amplitude_ratio';
 % 2 = 'amplitude_difference';
 % 3 = 'waveform_difference';
@@ -20,7 +20,7 @@ measurement = 4;
 % load receiver array
 load('../output/interferometry/array_1_ref.mat')
 
-data_independent = 'yes';
+data_independent = 'no';
 % if 'no', specify .mat file with data
 % load('../output/interferometry/data_1_ref.mat')
 
@@ -29,7 +29,8 @@ data_independent = 'yes';
 % initialize run
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-path(path,genpath('../'))
+addpath(genpath('../'))
+% path(path,genpath('../'))
 [Lx,Lz,nx,nz,dt,nt,order,model_type] = input_parameters();
 [width,absorb_left,absorb_right,absorb_top,absorb_bottom] = absorb_specs();
 output_specs
@@ -55,8 +56,8 @@ for i = 1:size(ref_stat,1)
     rec = array( find(~ismember(array,src,'rows') ) , :);
     
     % calculate the correlation for each pair
-    fprintf('calculate green function\n')
-    [~,~] = run_forward('forward_green',src,rec,i,flip_sr);
+    % fprintf('calculate green function\n')
+    % [~,~] = run_forward('forward_green',src,rec,i,flip_sr);
     fprintf('calculate correlation\n')
     [c_uniform( (i-1)*nr + 1 : i*nr , :),t] = run_forward('correlation',src,rec,i,flip_sr);
     
@@ -82,15 +83,18 @@ end
 
 
 % plot data and synthetics
-figure
-hold on
-if( strcmp(data_independent,'yes') )
-    h(1,:) = plot_recordings_all(c_uniform,t,'vel','r-',0);
-    legend(h,'uniform')
-else
-    h(1,:) = plot_recordings_all(c_data,t,'vel','k-',0);
-    h(2,:) = plot_recordings_all(c_uniform,t,'vel','r-',0);
-    legend(h,'data','uniform')
+if (strcmp(make_plots,'yes'))
+    figure
+    hold on
+    if( strcmp(data_independent,'yes') )
+        h(1,:) = plot_recordings_all(c_uniform,t,'vel','r-',0);
+        legend(h,'uniform')
+    else
+        h(1,:) = plot_recordings_all(c_data,t,'vel','k-',0);
+        h(2,:) = plot_recordings_all(c_uniform,t,'vel','r-',0);
+        legend(h,'data','uniform')
+    end
+    drawnow
 end
 
 
@@ -188,4 +192,6 @@ elseif( strcmp(type,'structure') )
 end
 
 
+% clean up
+rmpath(genpath('../'))
 toc

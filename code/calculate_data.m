@@ -81,8 +81,8 @@ legend('data')
 save(sprintf('../output/interferometry/array_%i_ref.mat',size(ref_stat,1)),'array','ref_stat')
 save(sprintf('../output/interferometry/data_%i_ref.mat',size(ref_stat,1)),'c_data','t')
 
+
+% clean up
 rmpath(genpath('../'))
-
-
 toc
 

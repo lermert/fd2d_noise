@@ -46,7 +46,8 @@ l=0;
 ln=1;
 
 % main loop
-while (norm(g)>tol*max(1,nmg0))
+% while (norm(g)>tol*max(1,nmg0))
+while (norm(g)>tol*max(0,nmg0))
  it=it+1;
 
  if(it>max_it)
@@ -84,6 +85,7 @@ while (norm(g)>tol*max(1,nmg0))
 %s
 %g
  [sig,xn,fn,gn]=stepsize_wolfe(xj,s,stg,fg,f,del,theta,1.0);
+ fprintf('misfit: %f\n',sig)
  % xn=xj-sig*s;
 
  fprintf(1,'it=%3.d   f=%e   ||g||=%e   sig=%6.5f   step=%s\n',it,f,norm(g),sig,step);

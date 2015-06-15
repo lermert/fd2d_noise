@@ -106,7 +106,9 @@ for n=1:n_receivers
         if( left < 0 )
             index = find( t==0 );
             left = t(index+1);
-        elseif( right > t(end) )
+        end
+        
+        if( right > t(end) )
             right = t(end);
         end
 

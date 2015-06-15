@@ -5,7 +5,7 @@ path(path,genpath('../'))
 x0 = reshape( ones(300,300),[],1 );
 
 % run inversion
-x = LBFGS(x0,'get_obj_grad',0.1,5);
+x = LBFGS(x0,'get_obj_grad',0.2,5);
 
 % save solution
 save ../output/solution.mat x
