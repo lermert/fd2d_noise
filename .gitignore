@@ -1,2 +1,26 @@
 
 *.mat
+
+*.o
+
+*.c
+
+*.h
+
+*.mexmaci64
+
+*.map
+
+*.sh
+
+*.mk
+
+*.mki
+
+*.png
+
+*.css
+
+*.html
+
+*.js

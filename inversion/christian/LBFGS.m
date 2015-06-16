@@ -53,8 +53,13 @@ while (norm(g)>tol*max(0,nmg0))
  if(it>max_it)
    return
  end
-
- sig=1;
+ 
+ if(it==1)
+     sig = 128;
+ else
+     sig=1;
+ end
+ 
 % compute BFGS-step s=B*g;
  q=g;
  for j=1:l
@@ -84,8 +89,7 @@ while (norm(g)>tol*max(0,nmg0))
 %xj
 %s
 %g
- [sig,xn,fn,gn]=stepsize_wolfe(xj,s,stg,fg,f,del,theta,1.0);
- fprintf('misfit: %f\n',sig)
+ [sig,xn,fn,gn]=stepsize_wolfe(xj,s,stg,fg,f,del,theta,sig);
  % xn=xj-sig*s;
 
  fprintf(1,'it=%3.d   f=%e   ||g||=%e   sig=%6.5f   step=%s\n',it,f,norm(g),sig,step);

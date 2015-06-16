@@ -173,7 +173,7 @@ for n=1:n_receivers
     if( strcmp(make_plots,'yes') )
         plot(t,adstf(n,:),'k')
         xlabel('t [s]')
-        title('adjoint source after time reversal')
+        title('adjoint source')
         drawnow
     end
    

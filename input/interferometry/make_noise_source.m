@@ -24,11 +24,9 @@ x_source_r = 1.0e6;
 z_source_r = 1.0e6;
 radius = 6.8e5;
 thickness = 1e5;
-angle_cover = 90.0;
-taper_width = 20;
+angle_cover = 20.0;
+taper_width = 20.0;
 taper_strength = 100;
-
-
 
 %- Or how to set sources everywhere? --------------------------------------
 
@@ -37,9 +35,10 @@ taper_strength = 100;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if( strcmp(standalone,'yes') )
-
-    % path(path,genpath('../../'));
-    addpath(genpath('../../'))
+    
+    % !!! hard coded at the moment !!!
+    addpath(genpath('~/Desktop/fd2d_noise/'))
+    
     output_specs
     
     f_sample = input_interferometry();
@@ -101,9 +100,10 @@ else
 %         
 %         if( angle_cover == 90 )
 %             % noise_source_distribution(:,:,i) = ( double(R > (radius-thickness/2) & R < (radius+thickness/2) ) )';
-%             noise_source_distribution(:,:,i) = (exp( -abs( R-radius ).^2/9e8 ) .* double(R > (radius-thickness/2) & R < (radius+thickness/2) ) )';
-%         else
-%             noise_source_distribution(:,:,i) = exp( -(angle-(angle_cover-taper_width)).^2/(taper_strength) .* double( angle>angle_cover-taper_width & angle<angle_cover ) ) .* double( R > (radius-+thickness/2) & R < (radius+thickness/2) & angle <= angle_cover )' ;
+%             noise_source_distribution(:,:,i) = (exp( -abs( R-radius ).^2/9e8 ) .* double(R > (radius-thickness/2) & R < (radius+thickness/2) ) );
+%         else            
+%             noise_source_distribution(:,:,i) = (exp( -abs( R-radius ).^2/9e8 ) .* double(R > (radius-thickness/2) & R < (radius+thickness/2) ) );
+%             noise_source_distribution(:,:,i) = noise_source_distribution(:,:,i) + exp( -abs( R-radius ).^2/9e8 ) .* ( 5*exp( -(angle-(angle_cover-taper_width)).^2/(taper_strength) .* double( angle>angle_cover-taper_width & angle<angle_cover ) ) .* double( R > (radius-thickness/2) & R < (radius+thickness/2) & angle <= angle_cover ) );
 %         end
 %         
 %     end
@@ -144,6 +144,6 @@ for i=1:n_noise_sources
 end
 
 if ( strcmp(standalone,'yes') )
-    rmpath(genpath('../../'))
+    rmpath(genpath('~/Desktop/fd2d_noise/'))
 end
 

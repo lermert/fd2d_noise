@@ -8,35 +8,39 @@ addpath(genpath('../'))
 flip_sr = 'no';
 
 [Lx,Lz,nx,nz,dt,nt,order,model_type] = input_parameters();
+
+[X,Z,x,z,dx,dz] = define_computational_domain(Lx,Lz,nx,nz);
+[mu,rho] = define_material_parameters(nx,nz,model_type); 
+
 [width,absorb_left,absorb_right,absorb_top,absorb_bottom] = absorb_specs();
 output_specs
 
 
 % define receiver array
-% nr_x = 4;
-% nr_z = 4;
-% array = zeros(nr_x*nr_z,2);
-% for i = 1:nr_x
-%     for j = 1:nr_z
-%         array( (i-1)*nr_x + j, 1 ) = 4*width + ( i-1 )*(Lx-8*width)/(nr_x-1);
-%         array( (i-1)*nr_z + j, 2 ) = 4*width + ( j-1 )*(Lz-8*width)/(nr_z-1);
-%     end
-% end
-
 nr_x = 2;
-nr_z = 1;
+nr_z = 2;
 array = zeros(nr_x*nr_z,2);
 for i = 1:nr_x
-        array( i, 1 ) = Lx/2 + (-1)^i * 0.15*Lx;
-        % array( i, 1 ) = Lx/2 + (-1)^i * 0.08*Lx - Lx/5;
-        array( i, 2 ) = Lz/2;
+    for j = 1:nr_z
+        array( (i-1)*nr_x + j, 1 ) = 4*width + ( i-1 )*(Lx-8*width)/(nr_x-1);
+        array( (i-1)*nr_z + j, 2 ) = 4*width + ( j-1 )*(Lz-8*width)/(nr_z-1);
+    end
 end
+
+% nr_x = 2;
+% nr_z = 1;
+% array = zeros(nr_x*nr_z,2);
+% for i = 1:nr_x
+%         array( i, 1 ) = Lx/2 + (-1)^i * 0.15*Lx;
+%         % array( i, 1 ) = Lx/2 + (-1)^i * 0.08*Lx - Lx/5;
+%         array( i, 2 ) = Lz/2;
+% end
 
 
 
 % select receivers that will be reference stations
-ref_stat = array(1,:);
-% ref_stat = array;
+% ref_stat = array(1,:);
+ref_stat = array;
 
 
 % plot configuration
@@ -48,6 +52,8 @@ if( strcmp(make_plots,'yes') )
     xlim([0 Lx])
     ylim([0 Lz])
     drawnow
+
+    plot_model
 end
 
 
@@ -79,7 +85,7 @@ legend('data')
 
 % save array and data for inversion
 save(sprintf('../output/interferometry/array_%i_ref.mat',size(ref_stat,1)),'array','ref_stat')
-save(sprintf('../output/interferometry/data_%i_ref.mat',size(ref_stat,1)),'c_data','t')
+save(sprintf('../output/interferometry/data_%i_ref_structure_slow.mat',size(ref_stat,1)),'c_data','t')
 
 
 % clean up

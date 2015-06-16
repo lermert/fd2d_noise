@@ -11,6 +11,7 @@ function [X,Z,K_s] = run_noise_source_kernel(simulation_mode,i_ref)
 %
 %==========================================================================
 
+
 %==========================================================================
 % set paths and read input
 %==========================================================================
@@ -30,7 +31,6 @@ cm = cbrewer('div','RdBu',100,'PCHIP');
 [Lx,Lz,nx,nz,dt,nt,order,model_type] = input_parameters();
 [X,Z,x,z,dx,dz] = define_computational_domain(Lx,Lz,nx,nz);
 [mu,rho] = define_material_parameters(nx,nz,model_type); 
-
 output_specs
 
 

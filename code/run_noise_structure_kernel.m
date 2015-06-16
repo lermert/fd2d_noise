@@ -1,7 +1,8 @@
-function [X,Z,K_rho,K_mu]=run_noise_structure_kernel(simulation_mode,i_ref,flip_sr)
+function [X,Z,K_rho,K_mu]=run_noise_structure_kernel(simulation_mode, i_ref, flip_sr)
 
 %==========================================================================
-% run simulation to compute sensitivity kernel for rho (only one-sided)
+% run simulation to compute sensitivity kernel for rho and mu
+% (only one-sided)
 %
 % output:
 %--------
@@ -9,6 +10,7 @@ function [X,Z,K_rho,K_mu]=run_noise_structure_kernel(simulation_mode,i_ref,flip_
 % K_rho: sensitivity kernel
 %
 %==========================================================================
+
 
 %==========================================================================
 % set paths and read input
@@ -24,9 +26,8 @@ cm = cbrewer('div','RdBu',100,'PCHIP');
 
 %- material and domain ----------------------------------------------------
 [Lx,Lz,nx,nz,dt,nt,order,model_type] = input_parameters();
-[mu,rho] = define_material_parameters(nx,nz,model_type);
 [X,Z,x,z,dx,dz] = define_computational_domain(Lx,Lz,nx,nz);
-
+[mu,rho] = define_material_parameters(nx,nz,model_type);
 output_specs
 
 
@@ -165,8 +166,8 @@ if( strcmp(flip_sr,'no') )
     load(['../output/interferometry/C_2_strain_dzv_' num2str(i_ref) '.mat']);
 else
     load(['../output/interferometry/C_2_flip_sr' num2str(i_ref) '.mat']);    
-    load(['../output/interferometry/C_2_strain_dxv_flip_sr'  num2str(i_ref) '.mat']);
-    load(['../output/interferometry/C_2_strain_dzv_flip_sr'  num2str(i_ref) '.mat']);
+    load(['../output/interferometry/C_2_strain_dxv_flip_sr_'  num2str(i_ref) '.mat']);
+    load(['../output/interferometry/C_2_strain_dzv_flip_sr_'  num2str(i_ref) '.mat']);
 end
 
 
@@ -177,8 +178,8 @@ for k=1:length(w_sample)
     K_rho = K_rho - G_1(:,:,k) .* C_2(:,:,k) * dw;
     
     % both is still in velocity
-    K_mu(1:nx-1,:) = K_mu(1:nx-1,:) - G_1_strain_dxv(:,:,k) .* C_2_strain_dxv(:,:,k) / w_sample(k)^2 * dw;
-    K_mu(:,1:nz-1) = K_mu(:,1:nz-1) - G_1_strain_dzv(:,:,k) .* C_2_strain_dzv(:,:,k) / w_sample(k)^2 * dw;
+    K_mu(1:nx-1,:) = K_mu(1:nx-1,:) + G_1_strain_dxv(:,:,k) .* C_2_strain_dxv(:,:,k) / w_sample(k)^2 * dw;
+    K_mu(:,1:nz-1) = K_mu(:,1:nz-1) + G_1_strain_dzv(:,:,k) .* C_2_strain_dzv(:,:,k) / w_sample(k)^2 * dw;
 end
 
 K_rho = real(K_rho);

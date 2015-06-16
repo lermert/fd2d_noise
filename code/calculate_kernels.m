@@ -8,10 +8,10 @@ tic
 % user input
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-type = 'source';
-% type = 'structure';
+% type = 'source';
+type = 'structure';
 
-measurement = 2;
+measurement = 4;
 % 1 = 'log_amplitude_ratio';
 % 2 = 'amplitude_difference';
 % 3 = 'waveform_difference';
@@ -22,7 +22,7 @@ load('../output/interferometry/array_1_ref.mat')
 
 data_independent = 'no';
 % if 'no', specify .mat file with data
-% load('../output/interferometry/data_1_ref.mat')
+load('../output/interferometry/data_1_ref_structure_slow_uniform_blob.mat')
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -30,7 +30,6 @@ data_independent = 'no';
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 addpath(genpath('../'))
-% path(path,genpath('../'))
 [Lx,Lz,nx,nz,dt,nt,order,model_type] = input_parameters();
 [width,absorb_left,absorb_right,absorb_top,absorb_bottom] = absorb_specs();
 output_specs
@@ -134,6 +133,13 @@ if( strcmp(type,'source') )
 % -------------------------------------------------------------------------
 elseif( strcmp(type,'structure') )
     
+    K_rho_1 = zeros(nx,nz,size(array,1));
+    K_rho_2 = zeros(nx,nz,size(array,1));
+    K_mu_1 = zeros(nx,nz,size(array,1));
+    K_mu_2 = zeros(nx,nz,size(array,1));
+    K_rho_all = zeros(nx,nz);
+    K_mu_all = zeros(nx,nz);
+    
     fprintf('\n')
     for i = 1:size(ref_stat,1)
         
@@ -145,15 +151,15 @@ elseif( strcmp(type,'structure') )
         src = ref_stat(i,:);
         rec = array( find(~ismember(array,src,'rows') ) , :);
         
-        % calculate first structure kernel
+        % calculate first part of structure kernel
         flip_sr = 'no';
         fprintf('calculate first structure kernel\n')
-        [~,~,K_rho_1,K_mu_1] = run_noise_structure_kernel('noise_structure_kernel',i,flip_sr);
+        [~,~,K_rho_1(:,:,i),K_mu_1(:,:,i)] = run_noise_structure_kernel('noise_structure_kernel',i,flip_sr);
         
         % calculate second part of structure kernel
         flip_sr = 'yes';
-        fprintf('calculate green function\n')
-        [~,~] = run_forward('forward_green',src,rec,i,flip_sr);
+        % fprintf('calculate green function\n')
+        % [~,~] = run_forward('forward_green',src,rec,i,flip_sr);
         fprintf('calculate correlation\n')
         [c_uniform_2( (i-1)*nr + 1 : i*nr , :),t] = run_forward('correlation',src,rec,i,flip_sr);
                 
@@ -164,28 +170,28 @@ elseif( strcmp(type,'structure') )
     
         switch measurement
             case 1
-                misfit = misfit + make_adjoint_sources(c_uniform_2( (i-1)*nr+1 : i*nr , :), c_data( (i-1)*nr+1 : i*nr , :), t, 'dis', 'log_amplitude_ratio', src, rec, i, flip_sr);
+                misfit = misfit + make_adjoint_sources(c_uniform_2( (i-1)*nr+1 : i*nr , :), fliplr(c_data( (i-1)*nr+1 : i*nr , :)), t, 'dis', 'log_amplitude_ratio', src, rec, i, flip_sr);
             case 2
-                misfit = misfit + make_adjoint_sources(c_uniform_2( (i-1)*nr+1 : i*nr , :), c_data( (i-1)*nr+1 : i*nr , :), t, 'dis', 'amplitude_difference', src, rec, i, flip_sr);
+                misfit = misfit + make_adjoint_sources(c_uniform_2( (i-1)*nr+1 : i*nr , :), fliplr(c_data( (i-1)*nr+1 : i*nr , :)), t, 'dis', 'amplitude_difference', src, rec, i, flip_sr);
             case 3
-                misfit = misfit + make_adjoint_sources(c_uniform_2( (i-1)*nr+1 : i*nr , :), c_data( (i-1)*nr+1 : i*nr , :), t, 'dis', 'waveform_difference', src, rec, i, flip_sr);
+                misfit = misfit + make_adjoint_sources(c_uniform_2( (i-1)*nr+1 : i*nr , :), fliplr(c_data( (i-1)*nr+1 : i*nr , :)), t, 'dis', 'waveform_difference', src, rec, i, flip_sr);
             case 4
-                misfit = misfit + make_adjoint_sources(c_uniform_2( (i-1)*nr+1 : i*nr , :), c_data( (i-1)*nr+1 : i*nr , :), t, 'dis', 'cc_time_shift', src, rec, i, flip_sr);
+                misfit = misfit + make_adjoint_sources(c_uniform_2( (i-1)*nr+1 : i*nr , :), fliplr(c_data( (i-1)*nr+1 : i*nr , :)), t, 'dis', 'cc_time_shift', src, rec, i, flip_sr);
             otherwise
                 error('\nspecify correct measurement!\n\n')
         end
         
         % calculate second structure kernel
         fprintf('calculate second structure kernel\n')
-        [X,Z,K_rho_2,K_mu_2] = run_noise_structure_kernel('noise_structure_kernel',i,flip_sr);        
+        [X,Z,K_rho_2(:,:,i),K_mu_2(:,:,i)] = run_noise_structure_kernel('noise_structure_kernel',i,flip_sr);        
         
         % sum kernels
-        K_rho_uniform = K_rho_1 + K_rho_2;        
-        K_mu_uniform = K_mu_1 + K_mu_2;        
+        K_rho_all = K_rho_all + K_rho_1(:,:,i) + K_rho_2(:,:,i);        
+        K_mu_all = K_mu_all + K_mu_1(:,:,i) + K_mu_2(:,:,i);        
         
         % plot kernels        
         plot_noise_structure_kernels_test
-        % plot_noise_structure_kernels(X,Z,K_rho_uniform)
+        % plot_noise_structure_kernels(X,Z,K_rho_all)
         
     end
     
