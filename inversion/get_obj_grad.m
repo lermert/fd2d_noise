@@ -57,7 +57,6 @@ function [f,g] = get_obj_grad(x)
         rec = array( find( ~ismember(array, src, 'rows') ) ,:);
         
         % calculate Green function
-        % G_2 = load(['../output/interferometry/G_2_' num2str(i) '.mat']);
         [G_2] = run_forward_green_fast_mex(mu, src);       
         
         % calculate correlation
@@ -80,12 +79,12 @@ function [f,g] = get_obj_grad(x)
         end
         
         
-        if( strcmp(type,'source') )            
-            % calculate source kernel
+        % calculate source kernel
+        if( strcmp(type,'source') )                
             [~,~,K_i] = run_noise_source_kernel_fast_mex(G_2, mu, adstf, rec);
-                
-        elseif( strcmp(type,'structure') )            
-            % calculate structure kernel
+        
+        % calculate structure kernel    
+        elseif( strcmp(type,'structure') )                
             [~,~,~,K_i] = run_noise_structure_kernel_fast_mex(C_2, C_2_dxv, C_2_dzv, mu, adstf, rec);
         
         end
@@ -110,6 +109,5 @@ function [f,g] = get_obj_grad(x)
     K_all = imfilter( K_all, myfilter, 'symmetric' );
     g = 4.8e10 * reshape( K_all, [], 1 );
 
-    
-    
+      
 end

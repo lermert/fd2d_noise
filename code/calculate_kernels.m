@@ -8,21 +8,21 @@ tic
 % user input
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% type = 'source';
-type = 'structure';
+type = 'source';
+% type = 'structure';
 
-measurement = 4;
+measurement = 1;
 % 1 = 'log_amplitude_ratio';
 % 2 = 'amplitude_difference';
 % 3 = 'waveform_difference';
 % 4 = 'cc_time_shift';
 
 % load receiver array
-load('../output/interferometry/array_1_ref.mat')
+load('../output/interferometry/array_1_ref_big_off_center.mat')
 
-data_independent = 'no';
+data_independent = 'yes';
 % if 'no', specify .mat file with data
-load('../output/interferometry/data_1_ref_structure_slow_uniform_blob.mat')
+% load('../output/interferometry/data_1_ref_structure_slow_uniform_blob.mat')
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -55,8 +55,8 @@ for i = 1:size(ref_stat,1)
     rec = array( find(~ismember(array,src,'rows') ) , :);
     
     % calculate the correlation for each pair
-    % fprintf('calculate green function\n')
-    % [~,~] = run_forward('forward_green',src,rec,i,flip_sr);
+    fprintf('calculate green function\n')
+    [~,~] = run_forward('forward_green',src,rec,i,flip_sr);
     fprintf('calculate correlation\n')
     [c_uniform( (i-1)*nr + 1 : i*nr , :),t] = run_forward('correlation',src,rec,i,flip_sr);
     

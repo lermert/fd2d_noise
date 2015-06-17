@@ -17,7 +17,7 @@ verbose = 'no';
 % make plots every nth timestep
 %==========================================================================
 
-make_plots = 'no';
+make_plots = 'yes';
 plot_nt = 100;
 
 

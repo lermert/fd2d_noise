@@ -3,11 +3,11 @@
 % generalities
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-standalone = 'no';             % 'yes' for usage without other computations
+standalone = 'yes';             % 'yes' for usage without other computations
 
 %- number of noise sources
 n_noise_sources = 1;
-sources_everywhere = true;
+sources_everywhere = false;
 
 %- characteristics of the noise spectrum ----------------------------------
 %- only needed in this routine --------------------------------------------
@@ -24,7 +24,7 @@ x_source_r = 1.0e6;
 z_source_r = 1.0e6;
 radius = 6.8e5;
 thickness = 1e5;
-angle_cover = 20.0;
+angle_cover = 90.0;
 taper_width = 20.0;
 taper_strength = 100;
 
@@ -90,28 +90,28 @@ else
 %     noise_source_distribution(:,:,i) = flipud( abs((double(A(:,:))-255)/max(max(abs(double(A)-255)))) )'; 
  
   
-%     for i=1:n_noise_sources        
-%         
-%         R = ( (X-x_source_r(i)).^2 + (Z-z_source_r(i)).^2 ).^(1/2);        
-%         angle = atan( abs( X-x_source_r(i) )./abs(Z-z_source_r(i)) ) *180/pi;
-%         
-%         [k,l] = find(isnan(angle));
-%         angle(k,l) = 10;
-%         
-%         if( angle_cover == 90 )
-%             % noise_source_distribution(:,:,i) = ( double(R > (radius-thickness/2) & R < (radius+thickness/2) ) )';
-%             noise_source_distribution(:,:,i) = (exp( -abs( R-radius ).^2/9e8 ) .* double(R > (radius-thickness/2) & R < (radius+thickness/2) ) );
-%         else            
-%             noise_source_distribution(:,:,i) = (exp( -abs( R-radius ).^2/9e8 ) .* double(R > (radius-thickness/2) & R < (radius+thickness/2) ) );
-%             noise_source_distribution(:,:,i) = noise_source_distribution(:,:,i) + exp( -abs( R-radius ).^2/9e8 ) .* ( 5*exp( -(angle-(angle_cover-taper_width)).^2/(taper_strength) .* double( angle>angle_cover-taper_width & angle<angle_cover ) ) .* double( R > (radius-thickness/2) & R < (radius+thickness/2) & angle <= angle_cover ) );
-%         end
-%         
-%     end
-    
-    noise_source_distribution(:,:,:) = 1.0;
     for i=1:n_noise_sources        
-        noise_source_distribution(:,:,i) = noise_source_distribution(:,:,i) + 3.0*( exp( -( (X-x_sourcem(i)).^2 + (Z-z_sourcem(i)).^2 ) / (sourcearea_width(i))^2 ) )';        
+        
+        R = ( (X-x_source_r(i)).^2 + (Z-z_source_r(i)).^2 ).^(1/2);        
+        angle = atan( abs( X-x_source_r(i) )./abs(Z-z_source_r(i)) ) *180/pi;
+        
+        [k,l] = find(isnan(angle));
+        angle(k,l) = 10;
+        
+        if( angle_cover == 90 )
+            % noise_source_distribution(:,:,i) = ( double(R > (radius-thickness/2) & R < (radius+thickness/2) ) )';
+            noise_source_distribution(:,:,i) = (exp( -abs( R-radius ).^2/9e8 ) .* double(R > (radius-thickness/2) & R < (radius+thickness/2) ) );
+        else            
+            noise_source_distribution(:,:,i) = (exp( -abs( R-radius ).^2/9e8 ) .* double(R > (radius-thickness/2) & R < (radius+thickness/2) ) );
+            noise_source_distribution(:,:,i) = noise_source_distribution(:,:,i) + exp( -abs( R-radius ).^2/9e8 ) .* ( 5*exp( -(angle-(angle_cover-taper_width)).^2/(taper_strength) .* double( angle>angle_cover-taper_width & angle<angle_cover ) ) .* double( R > (radius-thickness/2) & R < (radius+thickness/2) & angle <= angle_cover ) );
+        end
+        
     end
+    
+%     noise_source_distribution(:,:,:) = 1.0;
+%     for i=1:n_noise_sources        
+%         noise_source_distribution(:,:,i) = noise_source_distribution(:,:,i) + 3.0*( exp( -( (X-x_sourcem(i)).^2 + (Z-z_sourcem(i)).^2 ) / (sourcearea_width(i))^2 ) )';        
+%     end
     
 end
 
