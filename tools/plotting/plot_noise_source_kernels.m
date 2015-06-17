@@ -14,11 +14,11 @@ f_sample = input_interferometry();
 
 %- decide on a frequency --------------------------------------------------
 fprintf(1,'f_min=%g Hz, f_max=%g Hz, df=%g Hz\n',min(f_sample),max(f_sample),f_sample(2)-f_sample(1));
-f_min = input('min frequency in Hz: ');
-f_max = input('max frequency in Hz: ');
+% f_min = input('min frequency in Hz: ');
+% f_max = input('max frequency in Hz: ');
 
-% f_min = 0.08;
-% f_max = 0.18;
+f_min = 0.08;
+f_max = 0.18;
 
 ind_f_min = find( min( abs(f_min-f_sample)) == abs(f_min-f_sample),1,'first' );
 ind_f_max = find( min( abs(f_max-f_sample)) == abs(f_max-f_sample),1,'first' );

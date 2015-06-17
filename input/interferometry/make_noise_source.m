@@ -24,7 +24,7 @@ x_source_r = 1.0e6;
 z_source_r = 1.0e6;
 radius = 6.8e5;
 thickness = 1e5;
-angle_cover = 90.0;
+angle_cover = 30.0;
 taper_width = 20.0;
 taper_strength = 100;
 
@@ -123,7 +123,7 @@ for i=1:n_noise_sources
         hold on
         % set(gca,'FontSize',20);
         load cm_psd
-        pcolor(X,Z,noise_source_distribution(:,:,i)');
+        nd = pcolor(X,Z,noise_source_distribution(:,:,i)'/max(max(noise_source_distribution(:,:,i))));
         
         plot([width,Lx-width],[width,width],'k--')
         plot([width,Lx-width],[Lz-width,Lz-width],'k--')
