@@ -44,16 +44,24 @@ while (norm(g)>tol*max(1,nmg0))
  if (stepsz==0)
 % choose sig by Armijo stepsize rule starting with previous
 % stepsize sig0. If sig0 is acceptable try sig=2^k*sig0.
-  [sig]=stepsize_armijo(xj,s,stg,fg,f,del,sig0,1);
+  [sig,xn,fn,gn]=stepsize_armijo(xj,s,stg,fg,f,del,sig0,1);
  else
 % choose sig by Powell-Wolfe stepsize rule starting with previous
 % stepsize sig0.
-  [sig]=stepsize_wolfe(xj,s,stg,fg,f,del,theta,sig0);
+  [sig,xn,fn,gn]=stepsize_wolfe(xj,s,stg,fg,f,del,theta,sig0);
  end
- xn=xj-sig*s;
+ 
+ %%%% xn=xj-sig*s;
+ 
  fprintf(1,'it=%3.d   f=%e   ||g||=%e   sig=%5.3f\n',it,f,norm(g),sig);
+ save(sprintf('model_%i.mat',it),'xn','gn')
+ 
  xj=xn;
- [f,g]=feval(fg,xj);
+ 
+ %%%% [f,g]=feval(fg,xj);
+ f = fn;
+ g = gn;
+ 
  s=g;
  nmg=norm(g);
  stg=s'*g;

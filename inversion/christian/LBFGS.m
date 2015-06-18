@@ -93,7 +93,7 @@ while (norm(g)>tol*max(0,nmg0))
  % xn=xj-sig*s;
 
  fprintf(1,'it=%3.d   f=%e   ||g||=%e   sig=%6.5f   step=%s\n',it,f,norm(g),sig,step);
- save(sprintf('../../output/model_%i.mat',it),'xn','gn')
+ save(sprintf('model_%i.mat',it),'xn','gn')
  % [fn,gn]=feval(fg,xn);
 %xn
 %gn
