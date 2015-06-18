@@ -27,7 +27,7 @@ function [sig,xn,fn,gn]=stepsize_armijo(xj,s,stg,fct,f,del,sig0,sig_gt_1)
 %
  sig=sig0;
  xn=xj-sig*s;
- [fn]=feval(fct,xn);
+ [fn,gn]=feval(fct,xn);
 % determine maximal sig=sig0/2^k satisfying Armijo
  while (f-fn<del*sig*stg)
   sig=0.5*sig;
