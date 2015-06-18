@@ -8,15 +8,15 @@ function [f,g] = get_obj_grad(x)
     % type = 'source';
     type = 'structure';
 
-    measurement = 3;
+    measurement = 4;
     % 1 = 'log_amplitude_ratio';
     % 2 = 'amplitude_difference';
     % 3 = 'waveform_difference';
     % 4 = 'cc_time_shift';
     
     % load array with reference stations and data
-    load('../output/interferometry/array_4_ref.mat');
-    load('../output/interferometry/data_4_ref_structure_slow.mat');
+    load('../output/interferometry/array_16_ref.mat');
+    load('../output/interferometry/data_16_ref_uniform_blob_structure_slow.mat');
     
     % design filter for smoothing of kernel
     myfilter = fspecial('gaussian',[40 40], 20);

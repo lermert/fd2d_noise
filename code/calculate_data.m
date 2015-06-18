@@ -39,24 +39,25 @@ end
 
 
 % select receivers that will be reference stations
-ref_stat = array(1,:);
-% ref_stat = array;
+% ref_stat = array(1,:);
+ref_stat = array;
 
 
 % plot configuration
-if( strcmp(make_plots,'yes') )
-    figure
-    hold on
-    plot(array(:,1),array(:,2),'o')
-    plot(ref_stat(:,1),ref_stat(:,2),'x')
-    xlim([0 Lx])
-    ylim([0 Lz])
-    drawnow
+% if( strcmp(make_plots,'yes') )
+%     figure
+%     hold on
+%     plot(array(:,1),array(:,2),'o')
+%     plot(ref_stat(:,1),ref_stat(:,2),'x')
+%     xlim([0 Lx])
+%     ylim([0 Lz])
+%     drawnow
 
     plot_model
-end
+% end
 
 return
+
 
 % calculate correlations
 nr = size(array,1)-1;
@@ -86,7 +87,7 @@ legend('data')
 
 % save array and data for inversion
 save(sprintf('../output/interferometry/array_%i_ref.mat',size(ref_stat,1)),'array','ref_stat')
-save(sprintf('../output/interferometry/data_%i_ref_structure_slow.mat',size(ref_stat,1)),'c_data','t')
+save(sprintf('../output/interferometry/data_%i_ref_uniform_blob_structure_slow.mat',size(ref_stat,1)),'c_data','t')
 
 
 % clean up

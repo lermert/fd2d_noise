@@ -9,7 +9,8 @@ matlabpool(cluster,16)
 x0 = reshape( zeros(300,300),[],1 );
 
 % run inversion
-x = 4.8e10 * ( 1 + LBFGS(x0,'get_obj_grad',0.01,5) );
+x = 4.8e10 * ( 1 + LBFGS(x0,'get_obj_grad',0.2,5) );
+% x = 4.8e10 * ( 1 + steepest_descent(x0,'get_obj_grad',0.2,0) );
 
 % save solution
 save ../output/solution.mat x

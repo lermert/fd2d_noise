@@ -22,7 +22,7 @@ shading flat
 title('rho [kg/m^3]','FontSize',14)
 xlabel('x [m]','FontSize',14);
 ylabel('z [m]','FontSize',14);
-
+colorbar
 
 subplot(2,2,3:4)
 pcolor(X,Z,sqrt( (mu./rho)' ));
@@ -32,6 +32,4 @@ shading flat
 title('velocity [km/s]','FontSize',14)
 xlabel('x [m]','FontSize',14);
 ylabel('z [m]','FontSize',14);
-
-
 colorbar

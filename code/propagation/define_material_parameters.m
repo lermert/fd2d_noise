@@ -83,6 +83,22 @@ elseif (model_type==7)
     mu(1:330,:) = 3.675e10;
     mu(331:end,:) = 2.7e10;
     
+elseif (model_type==999)
+    
+    rho = 3000.0*ones(nx,nz);
+    mu = 4.8e10*ones(nx,nz);
+    
+    % rho(98:102,123:127) = rho(98:102,123:127) + 2000.0;
+    % mu(140:160,140:160) = mu(140:160,140:160) + 2.0e10;
+    
+    x_sourcem = 2.0e5;
+    z_sourcem = 2.0e5;
+    sourcearea_width = 0.4e5;
+    
+    [Lx,Lz,nx,nz,~,~,~,~] = input_parameters();
+    [X,Z,~,~,~,~] = define_computational_domain(Lx,Lz,nx,nz);
+    mu = mu - 8.0e9 * ( exp( -( (X-x_sourcem).^2 + (Z-z_sourcem).^2 ) / (sourcearea_width)^2 ) )';
+    
 elseif (strcmp(model_type,'picture') )
     
     A = imread('../models/rand.png');

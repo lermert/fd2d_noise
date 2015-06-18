@@ -55,7 +55,7 @@ while (norm(g)>tol*max(0,nmg0))
  end
  
  if(it==1)
-     sig = 128;
+     sig = 16;
  else
      sig=1;
  end
@@ -93,6 +93,7 @@ while (norm(g)>tol*max(0,nmg0))
  % xn=xj-sig*s;
 
  fprintf(1,'it=%3.d   f=%e   ||g||=%e   sig=%6.5f   step=%s\n',it,f,norm(g),sig,step);
+ save(sprintf('../../output/model_%i.mat',it),'xn','gn')
  % [fn,gn]=feval(fg,xn);
 %xn
 %gn
@@ -106,9 +107,9 @@ while (norm(g)>tol*max(0,nmg0))
   P(:,ln)=p;
   l=min(l+1,lmax);
   ln=mod(ln,lmax)+1;
-  if l==lmax
-   gak=dtp/(d'*d);
-  end
+  %if l==lmax
+  % gak=dtp/(d'*d);
+  %end
  end
  xj=xn;
  g=gn;

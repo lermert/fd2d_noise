@@ -11,7 +11,7 @@ tic
 type = 'source';
 % type = 'structure';
 
-measurement = 1;
+measurement = 4;
 % 1 = 'log_amplitude_ratio';
 % 2 = 'amplitude_difference';
 % 3 = 'waveform_difference';
