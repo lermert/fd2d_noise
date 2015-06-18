@@ -1,2 +1,2 @@
 
-watch -n 20 bpeek -J *inversion_euler
+bpeek -fJ *inversion_euler
