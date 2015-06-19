@@ -15,11 +15,12 @@ function [f,g] = get_obj_grad(x)
     % 4 = 'cc_time_shift';
     
     % load array with reference stations and data
-    load('../output/interferometry/array_16_ref.mat');
-    load('../output/interferometry/data_16_ref_uniform_blob_structure_slow.mat');
+    load('../output/interferometry/array_16_ref_big_test1.mat');
+    load('../output/interferometry/data_16_ref_big_test1.mat');
     
     % design filter for smoothing of kernel
-    myfilter = fspecial('gaussian',[40 40], 20);
+    % myfilter = fspecial('gaussian',[40 40], 20);
+    myfilter = fspecial('gaussian',[75 75], 30);
     
  
 
@@ -29,7 +30,7 @@ function [f,g] = get_obj_grad(x)
     
     % initialize variables
     path(path,genpath('../'))
-    [~,~,nx,nz,~,~,~,~] = input_parameters();
+    [~,~,nx,nz] = input_parameters();
    
     % initialize kernel structures
     if( strcmp(type,'source') )
@@ -41,6 +42,7 @@ function [f,g] = get_obj_grad(x)
         
     elseif( strcmp(type,'structure') )
         source_dist = ones(nx*nz,1);
+        % load('source_log_a.mat')
         mu = 4.8e10 * (1+x);
         
         K_all = zeros(nx, nz);
@@ -56,11 +58,24 @@ function [f,g] = get_obj_grad(x)
         src = ref_stat(i,:);
         rec = array( find( ~ismember(array, src, 'rows') ) ,:);
         
-        % calculate Green function
-        [G_2] = run_forward_green_fast_mex(mu, src);       
+        % load or calculate Green function
+        if( strcmp(type,'source') && exist(['../output/interferometry/G_2_' num2str(i) '.mat'], 'file') )
+            G_2 = load_G_2(['../output/interferometry/G_2_' num2str(i) '.mat']);
+            
+        else
+            [G_2] = run_forward_green_fast_mex(mu, src);
+            
+            if( strcmp(type,'source') )
+                parsave(['../output/interferometry/G_2_' num2str(i) '.mat'], G_2)
+            end
+        end
         
         % calculate correlation
-        [c_it, t, C_2, C_2_dxv, C_2_dzv] = run_forward_correlation_fast_mex(G_2, source_dist, mu, rec);
+        if( strcmp(type,'source') )
+            [c_it, t] = run_forward_correlation_fast_mex(G_2, source_dist, mu, rec);
+        elseif( strcmp(type,'structure') )
+            [c_it, t, C_2_dxv, C_2_dzv] = run_forward_correlation_fast_mex(G_2, source_dist, mu, rec);
+        end
         
         
         % calculate misfit and adjoint source function
@@ -85,7 +100,7 @@ function [f,g] = get_obj_grad(x)
         
         % calculate structure kernel    
         elseif( strcmp(type,'structure') )                
-            [~,~,~,K_i] = run_noise_structure_kernel_fast_mex(C_2, C_2_dxv, C_2_dzv, mu, adstf, rec);
+            [~,~,K_i] = run_noise_mu_kernel_fast_mex(C_2_dxv, C_2_dzv, mu, adstf, rec);
         
         end
         
@@ -99,15 +114,23 @@ function [f,g] = get_obj_grad(x)
         
     end
     
+    
     fprintf('misfit: %f\n',f)
     
-    % smooth final kernel
+    % sum frequencies of source kernel
     if( strcmp(type,'source') )
         K_all = sum( K_all(:,:,8:33),3 );
     end
     
+    % smooth final kernel
     K_all = imfilter( K_all, myfilter, 'symmetric' );
-    g = 4.8e10 * reshape( K_all, [], 1 );
+    
+    % reshape kernel to column vector 
+    if( strcmp(type,'source') )
+        g = reshape( K_all, [], 1 );
+    elseif( strcmp(type,'structure') )
+        g = 4.8e10 * reshape( K_all, [], 1 );
+    end
 
       
 end

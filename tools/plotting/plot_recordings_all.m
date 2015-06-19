@@ -1,8 +1,10 @@
-% function plot_recordings(u,t,mode)
+% plot_recordings_all(u,t,veldis,color,a)
 %
 % u: displacement recordings
 % t: time axis
 % mode: 'dis' for displacement, 'vel' for velocity
+% color
+% additional relative offset in y direction, usually a=0
 
 function h = plot_recordings_all(u,t,veldis,color,a)
 

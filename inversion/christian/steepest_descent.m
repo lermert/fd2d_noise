@@ -27,6 +27,9 @@ del=0.001;
 % constant del<theta<1 for Wolfe condition
 theta=0.6;
 
+% sig = 16;
+sig = 0.0625;
+
 xj=x0;
 [f,g]=feval(fg,xj);
 s=g;
@@ -35,14 +38,8 @@ nmg=nmg0;
 it=0;
 
 % main loop
-while (norm(g)>tol*max(1,nmg0))
+while (norm(g)>tol*max(0,nmg0))
  it=it+1;
- 
- if(it==1)
-     sig=16;
- else
-     sig=1;
- end
  
  sig0=sig;
  stg=s'*g;

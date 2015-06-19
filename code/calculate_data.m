@@ -2,17 +2,20 @@
 clear all
 close all
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% NEED A PARALLEL VERSION %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 tic
 
 addpath(genpath('../'))
 flip_sr = 'no';
 
 [Lx,Lz,nx,nz,dt,nt,order,model_type] = input_parameters();
-
 [X,Z,x,z,dx,dz] = define_computational_domain(Lx,Lz,nx,nz);
 [mu,rho] = define_material_parameters(nx,nz,model_type); 
-
-[width,absorb_left,absorb_right,absorb_top,absorb_bottom] = absorb_specs();
+[width] = absorb_specs();
 output_specs
 
 
@@ -22,8 +25,11 @@ nr_z = 4;
 array = zeros(nr_x*nr_z,2);
 for i = 1:nr_x
     for j = 1:nr_z
-        array( (i-1)*nr_x + j, 1 ) = 4*width + ( i-1 )*(Lx-8*width)/(nr_x-1);
-        array( (i-1)*nr_z + j, 2 ) = 4*width + ( j-1 )*(Lz-8*width)/(nr_z-1);
+        % array( (i-1)*nr_x + j, 1 ) = 4*width + ( i-1 )*(Lx-8*width)/(nr_x-1);
+        % array( (i-1)*nr_z + j, 2 ) = 4*width + ( j-1 )*(Lz-8*width)/(nr_z-1);
+        
+        array( (i-1)*nr_x + j, 1 ) = 0.9e6 + ( i-1 )*0.25e6;
+        array( (i-1)*nr_z + j, 2 ) = 0.6e6 + ( j-1 )*0.25e6;
     end
 end
 
@@ -44,21 +50,19 @@ ref_stat = array;
 
 
 % plot configuration
-% if( strcmp(make_plots,'yes') )
-%     figure
-%     hold on
-%     plot(array(:,1),array(:,2),'o')
-%     plot(ref_stat(:,1),ref_stat(:,2),'x')
-%     xlim([0 Lx])
-%     ylim([0 Lz])
-%     drawnow
+if( strcmp(make_plots,'yes') )
+    figure
+    hold on
+    plot(array(:,1),array(:,2),'o')
+    plot(ref_stat(:,1),ref_stat(:,2),'x')
+    xlim([0 Lx])
+    ylim([0 Lz])
+    drawnow
 
     plot_model
-% end
+end
 
 return
-
-
 % calculate correlations
 nr = size(array,1)-1;
 fprintf('\n')
@@ -80,14 +84,16 @@ end
 
 
 % plot data
-figure
-plot_recordings_all(c_data,t,'vel','k-',0);
-legend('data')
+if( strcmp(make_plots,'yes') )
+    figure
+    plot_recordings_all(c_data,t,'vel','k-',0);
+    legend('data')
+end
 
 
 % save array and data for inversion
-save(sprintf('../output/interferometry/array_%i_ref.mat',size(ref_stat,1)),'array','ref_stat')
-save(sprintf('../output/interferometry/data_%i_ref_uniform_blob_structure_slow.mat',size(ref_stat,1)),'c_data','t')
+save(sprintf('../output/interferometry/array_%i_ref_big_test1.mat',size(ref_stat,1)),'array','ref_stat')
+save(sprintf('../output/interferometry/data_%i_ref_big_test1.mat',size(ref_stat,1)),'c_data','t')
 
 
 % clean up

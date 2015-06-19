@@ -1,4 +1,4 @@
-function [displacement_seismograms,t,C_2,C_2_dxv,C_2_dzv] = run_forward_correlation_fast(G_2, source_dist, mu, rec)
+function [displacement_seismograms,t,C_2_dxv,C_2_dzv] = run_forward_correlation_fast(G_2, source_dist, mu, rec)
 
 %==========================================================================
 % run forward simulation
@@ -63,7 +63,7 @@ end
 
 
 %- Fourier transform of the correlation velocity field
-C_2 = zeros(nx,nz,length(f_sample)) + 1i*zeros(nx,nz,length(f_sample));
+% C_2 = zeros(nx,nz,length(f_sample)) + 1i*zeros(nx,nz,length(f_sample));
 
 %- Fourier transform of strain field
 C_2_dxv = zeros(nx-1,nz,length(f_sample)) + 1i*zeros(nx-1,nz,length(f_sample));
@@ -155,7 +155,7 @@ for n = 1:length(t)
     if( mod(n,5) == 1 )
         
         for k=1:n_sample
-            C_2(:,:,k) = C_2(:,:,k) + v(:,:) * fft_coeff(n,k);
+            % C_2(:,:,k) = C_2(:,:,k) + v(:,:) * fft_coeff(n,k);
             
             C_2_dxv(:,:,k) = C_2_dxv(:,:,k) + strain_dxv(:,:) * fft_coeff(n,k);
             C_2_dzv(:,:,k) = C_2_dzv(:,:,k) + strain_dzv(:,:) * fft_coeff(n,k);

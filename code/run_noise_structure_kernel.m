@@ -177,7 +177,6 @@ K_mu = zeros(nx,nz);
 for k=1:length(w_sample)
     K_rho = K_rho - G_1(:,:,k) .* C_2(:,:,k) * dw;
     
-    % both is still in velocity
     K_mu(1:nx-1,:) = K_mu(1:nx-1,:) + G_1_strain_dxv(:,:,k) .* C_2_strain_dxv(:,:,k) / w_sample(k)^2 * dw;
     K_mu(:,1:nz-1) = K_mu(:,1:nz-1) + G_1_strain_dzv(:,:,k) .* C_2_strain_dzv(:,:,k) / w_sample(k)^2 * dw;
 end

@@ -26,11 +26,11 @@ elseif (model_type==2)
     
     x_sourcem = 2.0e5;
     z_sourcem = 2.0e5;
-    sourcearea_width = 0.4e5;
+    x_width = 0.4e5;
     
     [Lx,Lz,nx,nz,~,~,~,~] = input_parameters();
     [X,Z,~,~,~,~] = define_computational_domain(Lx,Lz,nx,nz);
-    mu = mu - 8.0e9 * ( exp( -( (X-x_sourcem).^2 + (Z-z_sourcem).^2 ) / (sourcearea_width)^2 ) )';
+    mu = mu - 8.0e9 * ( exp( -( (X-x_sourcem).^2 + (Z-z_sourcem).^2 ) / (x_width)^2 ) );
     
 elseif (model_type==3)
     
@@ -88,16 +88,27 @@ elseif (model_type==999)
     rho = 3000.0*ones(nx,nz);
     mu = 4.8e10*ones(nx,nz);
     
-    % rho(98:102,123:127) = rho(98:102,123:127) + 2000.0;
-    % mu(140:160,140:160) = mu(140:160,140:160) + 2.0e10;
+    x_sourcem = [1.15e6 1.45e6];
+    z_sourcem = [1.0e6 1.0e6];
+    x_width = [1.1e5 1.1e5];
+    z_width = [2.5e5 2.5e5];
     
-    x_sourcem = 2.0e5;
-    z_sourcem = 2.0e5;
-    sourcearea_width = 0.4e5;
+    [Lx,Lz,nx,nz] = input_parameters();
+    [X,Z] = define_computational_domain(Lx,Lz,nx,nz);
     
-    [Lx,Lz,nx,nz,~,~,~,~] = input_parameters();
-    [X,Z,~,~,~,~] = define_computational_domain(Lx,Lz,nx,nz);
-    mu = mu - 8.0e9 * ( exp( -( (X-x_sourcem).^2 + (Z-z_sourcem).^2 ) / (sourcearea_width)^2 ) )';
+    for i=1:size(x_sourcem,2)
+        mu = mu + (-1)^i * 4.0e9 * exp( -( (X-x_sourcem(i)).^2 ) / x_width(i)^2 )' .* exp( -( (Z-z_sourcem(i)).^2 ) / z_width(i)^2 )' ;
+    end
+    
+%     figure(1)
+%     clf
+%     mesh(X,Z,mu')
+%     shading interp
+%     axis square
+%     colorbar
+%     cm = cbrewer('div','RdBu',100,'PCHIP');
+%     colormap(cm)
+%     caxis([4.4 5.2]*1e10)
     
 elseif (strcmp(model_type,'picture') )
     
