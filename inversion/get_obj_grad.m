@@ -5,10 +5,10 @@ function [f,g] = get_obj_grad(x)
 % user input
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
-    % type = 'source';
-    type = 'structure';
+    type = 'source';
+    % type = 'structure';
 
-    measurement = 4;
+    measurement = 1;
     % 1 = 'log_amplitude_ratio';
     % 2 = 'amplitude_difference';
     % 3 = 'waveform_difference';
@@ -35,14 +35,18 @@ function [f,g] = get_obj_grad(x)
     % redirect optimization variable x and initialize kernel structures
     if( strcmp(type,'source') )
         source_dist = x;
-        mu = 4.8e10*ones(nx*nz,1);
+        
+        load('target_mu.mat')
+        % mu = 4.8e10*ones(nx*nz,1);
         
         f_sample = input_interferometry();
         K_all = zeros(nx, nz, length(f_sample));
         
     elseif( strcmp(type,'structure') )
-        source_dist = ones(nx*nz,1);
+        % source_dist = ones(nx*nz,1);
         % load('source_log_a.mat')
+        load('target.mat')
+        
         mu = 4.8e10 * (1+x);
         
         K_all = zeros(nx, nz);

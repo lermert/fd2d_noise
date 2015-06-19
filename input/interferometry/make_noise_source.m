@@ -149,7 +149,7 @@ for i=1:n_noise_sources
         plot([width,width],[width,Lz-width],'k--')
         plot([Lx-width,Lx-width],[width,Lz-width],'k--')
         
-        plot(array(:,1),array(:,2),'o')
+        % plot(array(:,1),array(:,2),'o')
         
         axis equal
         xlim([0 Lx])

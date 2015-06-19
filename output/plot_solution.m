@@ -2,11 +2,12 @@
 figure
 
 mes = 'wd';
+folder = '~/Desktop/inversion/source/error_in_structure/';
 
-x_1 = load(['~/Desktop/source_inversion/error_in_structure/' mes '/model_1']);
+x_1 = load([folder mes '/model_1']);
 % x_1.xn = x_1.x0;
-x_2 = load(['~/Desktop/source_inversion/error_in_structure/' mes '/model_3']);
-x_3 = load(['~/Desktop/source_inversion/error_in_structure/' mes '/model_4']);
+x_2 = load([folder mes '/model_6']);
+x_3 = load([folder mes '/model_9']);
 load('noise_dist.mat')
 
 
@@ -15,7 +16,7 @@ angle = [0 90];
 
 % z_limits = [4 4.9]*1e10;
 % c_limits = [4.0 5.6]*1e10;
-z_limits = [0.0 4.0];
+z_limits = [-2.0 4.0];
 c_limits = [-2.0 4.0];
 
 array_level = 3.8;
@@ -89,18 +90,17 @@ view(angle)
 
 
 
-% s6 = subplot(2,4,6);
-% hold on
-% mesh(X,Z,reshape(-x_1.gn,nx,nz)')
-% m_1 = max(max(abs(x_1.gn)));
-% shading interp
-% grid on
-% axis square
-% zlim([-m_1 m_1])
-% colormap(cm)
-% caxis([-m_1 m_1])
-% % title('inverted mu model')
-% view(angle)
+s6 = subplot(2,4,6);
+hold on
+mesh(X,Z,reshape(-x_1.gn,nx,nz)')
+m_1 = max(max(abs(x_1.gn)));
+shading interp
+grid on
+axis square
+zlim([-m_1 m_1])
+colormap(cm)
+caxis([-m_1 m_1])
+view(angle)
 
 s7 = subplot(2,4,7);
 hold on
@@ -114,17 +114,17 @@ colormap(cm)
 caxis([-m_2 m_2])
 view(angle)
 
-% s8 = subplot(2,4,8);
-% hold on
-% mesh(X,Z,reshape(-x_3.gn,nx,nz)')
-% m_2 = max(max(abs(x_3.gn)));
-% shading interp
-% grid on
-% axis square
-% zlim([-m_2 m_2])
-% colormap(cm)
-% caxis([-m_2 m_2])
-% view(angle)
+s8 = subplot(2,4,8);
+hold on
+mesh(X,Z,reshape(-x_3.gn,nx,nz)')
+m_2 = max(max(abs(x_3.gn)));
+shading interp
+grid on
+axis square
+zlim([-m_2 m_2])
+colormap(cm)
+caxis([-m_2 m_2])
+view(angle)
 
 
 
