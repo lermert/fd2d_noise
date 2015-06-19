@@ -32,7 +32,7 @@ function [f,g] = get_obj_grad(x)
     path(path,genpath('../'))
     [~,~,nx,nz] = input_parameters();
    
-    % initialize kernel structures
+    % redirect optimization variable x and initialize kernel structures
     if( strcmp(type,'source') )
         source_dist = x;
         mu = 4.8e10*ones(nx*nz,1);
