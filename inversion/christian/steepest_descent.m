@@ -27,8 +27,7 @@ del=0.001;
 % constant del<theta<1 for Wolfe condition
 theta=0.6;
 
-% sig = 16;
-sig = 0.0625;
+sig = 8;
 
 xj=x0;
 [f,g]=feval(fg,xj);
