@@ -5,10 +5,10 @@ function [f,g] = get_obj_grad(x)
 % user input
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
-    % type = 'source';
-    type = 'structure';
+    type = 'source';
+    % type = 'structure';
 
-    measurement = 3;
+    measurement = 4;
     % 1 = 'log_amplitude_ratio';
     % 2 = 'amplitude_difference';
     % 3 = 'waveform_difference';
@@ -36,8 +36,8 @@ function [f,g] = get_obj_grad(x)
     if( strcmp(type,'source') )
         source_dist = x;
         
-        load('true_mu.mat')
-        % mu = 4.8e10*ones(nx*nz,1);
+        % load('true_mu.mat')
+        mu = 4.8e10*ones(nx*nz,1);
         
         f_sample = input_interferometry();
         K_all = zeros(nx, nz, length(f_sample));

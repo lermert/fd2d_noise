@@ -1,21 +1,25 @@
 
 clear all
 
-type = 'source';
-% type = 'structure';
+% type = 'source';
+type = 'structure';
 
-measurement = 'log_a';
+% measurement = 'log_a';
 % measurement = 'cc';
-% measurement = 'wd';
+measurement = 'wd';
+% measurement = 'wd_75_75_30';
+% measurement = 'wd_150_150_50';
 
 folder_0 = '~/Desktop/inversion';
 % folder_1 = 'true_structure';
-folder_1 = 'error_in_structure';
+% folder_1 = 'homog_structure';
 % folder_1 = 'source_from_log_a_inversion';
+folder_1 = 'true_source';
+% folder_1 = 'homog_source';
 
 n_models = length( dir([folder_0 '/' type '/' folder_1 '/' measurement '/model_*']) );
-x_1 = load([folder_0 '/' type '/' folder_1 '/' measurement '/model_3']);
-x_2 = load([folder_0 '/' type '/' folder_1 '/' measurement '/model_' num2str(floor(n_models/2))]);
+x_1 = load([folder_0 '/' type '/' folder_1 '/' measurement '/model_1']);
+x_2 = load([folder_0 '/' type '/' folder_1 '/' measurement '/model_' num2str(ceil(n_models/2))]);
 x_3 = load([folder_0 '/' type '/' folder_1 '/' measurement '/model_' num2str(n_models)]);
 
 load('../output/interferometry/array_16_ref_big_test1.mat')
