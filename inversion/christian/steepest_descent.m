@@ -55,7 +55,7 @@ while (norm(g)>tol*max(0,nmg0))
  
  %%%% xn=xj-sig*s;
  
- fprintf(1,'it=%3.d   f=%e   ||g||=%e   sig=%5.3f\n',it,f,norm(g),sig);
+ fprintf(1,'it=%3.d   f=%e   ||g||=%e  ||g||/||g0||=%e  sig=%5.3f\n',it,f,norm(g),norm(g)/nmg0,sig);
  save(sprintf('model_%i.mat',it),'xn','gn')
  
  xj=xn;
@@ -69,6 +69,6 @@ while (norm(g)>tol*max(0,nmg0))
  stg=s'*g;
 end
 it=it+1;
-fprintf(1,'it=%3.d   f=%e   ||g||=%e\n\n',it,f,norm(g));
+fprintf(1,'it=%3.d   f=%e   ||g||=%e  ||g||/||g0||=%e\n\n',it,f,norm(g),norm(g)/nmg0);
 fprintf(1,'Successful termination with ||g||<%e*min(1,||g0||):\n',tol);
 
