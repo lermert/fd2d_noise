@@ -1,8 +1,4 @@
-function plot_correlation_source_function(x_plot,z_plot)
-
-%- set paths --------------------------------------------------------------
-path(path,'../input/');
-path(path,'../input/interferometry');
+function check_correlation_source_function(x_plot,z_plot)
 
 
 %- load the velocity spectrum field ---------------------------------------

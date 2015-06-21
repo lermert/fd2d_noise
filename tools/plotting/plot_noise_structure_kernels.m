@@ -5,7 +5,6 @@ function plot_noise_structure_kernels(X,Z,K_rho)
 %==========================================================================
 
 %- initialisations --------------------------------------------------------
-path(path,'../input/');
 cm = cbrewer('div','RdBu',100,'PCHIP');
 
 [Lx,Lz,nx,nz,dt,nt,order,model_type] = input_parameters();

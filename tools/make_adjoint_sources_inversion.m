@@ -5,8 +5,6 @@ function [misfit,adstf] = make_adjoint_sources_inversion(u,u_0,t,veldis,measurem
 %- initialisations --------------------------------------------------------
 %==========================================================================
 
-path(path,genpath('../'))
-
 nt = length(t);
 dt = t(2) - t(1);
 n_receivers = size(rec,1);
@@ -115,7 +113,7 @@ for n=1:n_receivers
     if strcmp(veldis,'vel')
         adstf(n,1:nt-1) = -diff(adstf(n,:))/dt;
     end      
-    
+
     
 end
 

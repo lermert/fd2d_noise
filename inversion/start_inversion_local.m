@@ -1,5 +1,4 @@
 
-path(path,genpath('../'))
 [~,~,nx,nz] = input_parameters();
 
 % initial model

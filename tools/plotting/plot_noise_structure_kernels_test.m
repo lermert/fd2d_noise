@@ -1,7 +1,6 @@
 
 close all
 
-addpath(genpath('~/Desktop/fd2d_noise/'))
 [Lx,Lz,nx,nz,dt,nt,order,model_type] = input_parameters();
 
 

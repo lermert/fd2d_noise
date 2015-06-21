@@ -29,7 +29,6 @@ data_independent = 'yes';
 % initialize run
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-addpath(genpath('../'))
 [Lx,Lz,nx,nz,dt,nt,order,model_type] = input_parameters();
 [width,absorb_left,absorb_right,absorb_top,absorb_bottom] = absorb_specs();
 output_specs
@@ -197,7 +196,4 @@ elseif( strcmp(type,'structure') )
     
 end
 
-
-% clean up
-rmpath(genpath('../'))
 toc

@@ -4,10 +4,6 @@ function K_line=plot_noise_source_linekernel(X,K_s)
 
 %- initialisations --------------------------------------------------------
 
-path(path,'../input/');
-path(path,'../input/interferometry/');
-path(path,'../code/propagation/');
-
 load cm_velocity;
 
 [Lx,Lz,nx,nz,dt,nt,order,model_type] = input_parameters();

@@ -12,12 +12,6 @@ tic
 %
 %==========================================================================
 
-
-%==========================================================================
-% set paths and read input
-%==========================================================================
-
-path(path,genpath('../'));
 cm = cbrewer('div','RdBu',100,'PCHIP');
 
 
@@ -133,7 +127,8 @@ elseif strcmp(simulation_mode,'correlation')
         
     
     %- initialise noise source locations and spectra
-    make_noise_source;
+    [noise_spectrum, noise_source_distribution] = make_noise_source_test('gaussian');
+    n_noise_sources = size(noise_spectrum,2);
     
 end
  
@@ -184,7 +179,7 @@ for n = 1:length(t)
     %- add sources of the correlation field -------------------------------    
     if( mod(n,5) == 1 && strcmp(simulation_mode,'correlation') && (t(n)<0.0) )
         
-        %- transform on the fly to the time domain        
+        %- transform on the fly to the time domain 
         S = zeros(nx,nz,n_noise_sources);
         
         for ns = 1:n_noise_sources
@@ -325,6 +320,7 @@ if( strcmp(verbose,'yes') )
     fprintf('percentage: %f\n\n',t_ifft/t_total*100)
 end
 
+% clean up
 close all
 
 

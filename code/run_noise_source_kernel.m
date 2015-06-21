@@ -11,15 +11,6 @@ function [X,Z,K_s] = run_noise_source_kernel(simulation_mode,i_ref)
 %
 %==========================================================================
 
-
-%==========================================================================
-% set paths and read input
-%==========================================================================
-
-path(path,'propagation/');
-path(path,'../input/');
-path(path,'../input/interferometry');
-
 cm = cbrewer('div','RdBu',100,'PCHIP');
 
 
