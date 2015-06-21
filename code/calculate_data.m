@@ -18,6 +18,7 @@ if(strcmp(mode,'cluster'))
     make_plots = 'no';
 end
 
+
 % define receiver array
 nr_x = 4;
 nr_z = 4;
@@ -40,7 +41,6 @@ end
 %         % array( i, 1 ) = Lx/2 + (-1)^i * 0.08*Lx - Lx/5;
 %         array( i, 2 ) = Lz/2;
 % end
-
 
 
 % select receivers that will be reference stations
@@ -102,7 +102,7 @@ end
 % reorganize correlation vector
 c_data = zeros(n_ref*n_rec,length(t));
 for i = 1:n_ref
-    c_data(i*n_rec,:) = c_it(i,:,:);
+    c_data( (i-1)*n_rec + 1 : i*n_rec, :) = c_it(i,:,:);
 end
 
 
@@ -119,12 +119,10 @@ save( sprintf('../output/interferometry/array_%i_ref_big_test1.mat',n_ref), 'arr
 save( sprintf('../output/interferometry/data_%i_ref_big_test1.mat',n_ref), 'c_data', 't')
 
 
-% close matlabpool
+% close matlabpool and clean up path
 if(strcmp(mode,'cluster'))
     matlabpool close
+    rmpath(genpath('../'))
 end
 
-
-% clean up
-rmpath(genpath('../'))
 
