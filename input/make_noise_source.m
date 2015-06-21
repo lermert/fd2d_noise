@@ -118,7 +118,7 @@ function [noise_spectrum, noise_source_distribution] = make_noise_source(source_
     % plot noise distribution
     for i=1:n_noise_sources
         if ( strcmp(make_plots,'yes') && ~strcmp(source_type,'equal') )
-            overlay = 'yes';
+            overlay = 'no';
             
             figure;
             hold on
@@ -128,9 +128,10 @@ function [noise_spectrum, noise_source_distribution] = make_noise_source(source_
                 pcolor(X,Z,(noise_source_distribution(:,:,i)-1)'/max(max(max(abs(noise_source_distribution(:,:,i)-1)))));
                 model = pcolor(X,Z,(mu-4.8e10)'/max(max(abs(mu-4.8e10))));
                 cm = cbrewer('div','RdBu',100,'PCHIP');
-                colormap(cm)
+                colormap(cm);
+                % cb = colorbar;
+                % ylabel(cb,'normalized for overlay') 
                 caxis([-1.0 1.0])
-                clabel('normalized for overlay')
                 alpha(model,0.5)
             else
                 pcolor(X,Z,(noise_source_distribution(:,:,i)-1)');
