@@ -1,4 +1,4 @@
-function [xn]=steepest_descent(x0,fg,tol,stepsz)
+function [xn,cn]=steepest_descent(x0,fg,tol,stepsz)
 %
 %
 % S. Ulbrich, F. Kruse, C. Boehm, 2012
@@ -46,17 +46,17 @@ while (norm(g)>tol*max(0,nmg0))
  if (stepsz==0)
 % choose sig by Armijo stepsize rule starting with previous
 % stepsize sig0. If sig0 is acceptable try sig=2^k*sig0.
-  [sig,xn,fn,gn]=stepsize_armijo(xj,s,stg,fg,f,del,sig0,1);
+  [sig,xn,fn,gn,cn]=stepsize_armijo(xj,s,stg,fg,f,del,sig0,1);
  else
 % choose sig by Powell-Wolfe stepsize rule starting with previous
 % stepsize sig0.
-  [sig,xn,fn,gn]=stepsize_wolfe(xj,s,stg,fg,f,del,theta,sig0);
+  [sig,xn,fn,gn,cn]=stepsize_wolfe(xj,s,stg,fg,f,del,theta,sig0);
  end
  
  %%%% xn=xj-sig*s;
  
  fprintf(1,'it=%3.d   f=%e   ||g||=%e  ||g||/||g0||=%e  sig=%5.3f\n',it,f,norm(g),norm(g)/nmg0,sig);
- save(sprintf('model_%i.mat',it),'xn','gn')
+ save(sprintf('model_%i.mat',it),'xn','gn','cn')
  
  xj=xn;
  

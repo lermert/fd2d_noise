@@ -1,4 +1,4 @@
-function [sig,xn,fn,gn]=stepsize_wolfe(xj,s,stg,fct,f,del,theta,sig0)
+function [sig,xn,fn,gn,cn]=stepsize_wolfe(xj,s,stg,fct,f,del,theta,sig0)
 %
 %
 % S. Ulbrich, F. Kruse, C. Boehm, 2012
@@ -25,14 +25,13 @@ function [sig,xn,fn,gn]=stepsize_wolfe(xj,s,stg,fct,f,del,theta,sig0)
 %
  sig=sig0;
  xn=xj-sig*s;
- [fn]=feval(fct,xn);
+ [fn,gn,cn]=feval(fct,xn);
 % Determine maximal sig=sig0/2^k satisfying Armijo
  while (f-fn<del*sig*stg)
   sig=0.5*sig;
   xn=xj-sig*s;
-  [fn]=feval(fct,xn);
+  [fn,gn,cn]=feval(fct,xn);
  end
- [fn,gn]=feval(fct,xn);
 
 % If sig=sig0 satisfies Armijo then try sig=2^k*sig0
 % until sig satisfies also the Wolfe condition
@@ -41,14 +40,15 @@ if(gn'*s>theta*stg)
     
  if (sig==sig0)
   xnn=xj-2*sig*s;
-  [fnn,gnn]=feval(fct,xnn);
+  [fnn,gnn,cnn]=feval(fct,xnn);
   while (f-fnn>=2*del*sig*stg)
    sig=2*sig;
    xn=xnn;
    fn=fnn;
    gn=gnn;
+   cn=cnn;
    xnn=xj-2*sig*s;
-   [fnn,gnn]=feval(fct,xnn);
+   [fnn,gnn,cnn]=feval(fct,xnn);
   end
  end
  sigp=2*sig;
@@ -57,12 +57,13 @@ if(gn'*s>theta*stg)
  while (gn'*s>theta*stg)
   sigb=0.5*(sig+sigp);
   xb=xj-sigb*s;
-  [fnn,gnn]=feval(fct,xb);
+  [fnn,gnn,cnn]=feval(fct,xb);
   if (f-fnn>=del*sigb*stg)
    sig=sigb;
    xn=xb;
    fn=fnn;
    gn=gnn;
+   cn=cnn;
   else
    sigp=sigb;
   end

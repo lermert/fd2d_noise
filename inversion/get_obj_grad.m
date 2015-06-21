@@ -1,5 +1,5 @@
 
-function [f,g] = get_obj_grad(x)
+function [f, g, c_all] = get_obj_grad(x)
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % user input
@@ -8,7 +8,7 @@ function [f,g] = get_obj_grad(x)
     type = 'source';
     % type = 'structure';
 
-    measurement = 4;
+    measurement = 1;
     % 1 = 'log_amplitude_ratio';
     % 2 = 'amplitude_difference';
     % 3 = 'waveform_difference';
@@ -29,14 +29,14 @@ function [f,g] = get_obj_grad(x)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
     
     % initialize variables
-    [~,~,nx,nz] = input_parameters();
+    [~,~,nx,nz,dt,nt] = input_parameters();
    
     % redirect optimization variable x and initialize kernel structures
     if( strcmp(type,'source') )
         source_dist = x;
         
-        % load('models/true_mu.mat')
-        mu = 4.8e10*ones(nx*nz,1);
+        load('models/true_mu.mat')
+        % mu = 4.8e10*ones(nx*nz,1);
         
         f_sample = input_interferometry();
         K_all = zeros(nx, nz, length(f_sample));
@@ -54,12 +54,18 @@ function [f,g] = get_obj_grad(x)
     
     % loop over reference stations
     f = 0;
-    parfor i = 1:size(ref_stat,1)
+    n_ref = size(ref_stat,1);
+    n_rec = size(array,1)-1;
+    t = -(nt-1)*dt:dt:(nt-1)*dt;
+    c_it = zeros(n_ref,n_rec,length(t));
+    
+    parfor i = 1:n_ref
         
         
         % each reference station will act as a source once
         src = ref_stat(i,:);
         rec = array( find( ~ismember(array, src, 'rows') ) ,:);
+        
         
         % load or calculate Green function
         if( strcmp(type,'source') && exist(['../output/interferometry/G_2_' num2str(i) '.mat'], 'file') )
@@ -73,25 +79,26 @@ function [f,g] = get_obj_grad(x)
             end
         end
         
+        
         % calculate correlation
         if( strcmp(type,'source') )
-            [c_it, t] = run_forward_correlation_fast_mex(G_2, source_dist, mu, rec);
+            [c_it(i,:,:), ~] = run_forward_correlation_fast_mex(G_2, source_dist, mu, rec);
         elseif( strcmp(type,'structure') )
-            [c_it, t, C_2_dxv, C_2_dzv] = run_forward_correlation_fast_mex(G_2, source_dist, mu, rec);
+            [c_it(i,:,:), ~, C_2_dxv, C_2_dzv] = run_forward_correlation_fast_mex(G_2, source_dist, mu, rec);
         end
         
         
         % calculate misfit and adjoint source function
-        indices = (i-1)*size(rec,1) + 1 : i*size(rec,1);
+        indices = (i-1)*n_rec + 1 : i*n_rec;
         switch measurement
             case 1
-                [f_n,adstf] = make_adjoint_sources_inversion( c_it, c_data(indices,:), t, 'dis', 'log_amplitude_ratio', src, rec );
+                [f_n,adstf] = make_adjoint_sources_inversion( squeeze(c_it(i,:,:)), c_data(indices,:), t, 'dis', 'log_amplitude_ratio', src, rec );
             case 2
-                [f_n,adstf] = make_adjoint_sources_inversion( c_it, c_data(indices,:), t, 'dis', 'amplitude_difference', src, rec );
+                [f_n,adstf] = make_adjoint_sources_inversion( squeeze(c_it(i,:,:)), c_data(indices,:), t, 'dis', 'amplitude_difference', src, rec );
             case 3
-                [f_n,adstf] = make_adjoint_sources_inversion( c_it, c_data(indices,:), t, 'dis', 'waveform_difference', src, rec );
+                [f_n,adstf] = make_adjoint_sources_inversion( squeeze(c_it(i,:,:)), c_data(indices,:), t, 'dis', 'waveform_difference', src, rec );
             case 4
-                [f_n,adstf] = make_adjoint_sources_inversion( c_it, c_data(indices,:), t, 'dis', 'cc_time_shift', src, rec );
+                [f_n,adstf] = make_adjoint_sources_inversion( squeeze(c_it(i,:,:)), c_data(indices,:), t, 'dis', 'cc_time_shift', src, rec );
             otherwise
                 error('\nspecify correct measurement!\n\n')
         end
@@ -119,6 +126,12 @@ function [f,g] = get_obj_grad(x)
     
     
     fprintf('misfit: %f\n',f)
+    
+    % reorganize correlation vector
+    c_all = zeros(n_ref*n_rec,length(t));
+    for i = 1:n_ref
+        c_all( (i-1)*n_rec + 1 : i*n_rec, :) = c_it(i,:,:);
+    end
     
     % sum frequencies of source kernel
     if( strcmp(type,'source') )

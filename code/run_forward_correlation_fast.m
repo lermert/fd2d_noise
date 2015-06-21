@@ -152,16 +152,16 @@ for n = 1:length(t)
     
     
     %- accumulate Fourier transform of the correlation velocity field -----    
-    if( mod(n,5) == 1 )
-        
-        for k=1:n_sample
-            % C_2(:,:,k) = C_2(:,:,k) + v(:,:) * fft_coeff(n,k);
-            
-            C_2_dxv(:,:,k) = C_2_dxv(:,:,k) + strain_dxv(:,:) * fft_coeff(n,k);
-            C_2_dzv(:,:,k) = C_2_dzv(:,:,k) + strain_dzv(:,:) * fft_coeff(n,k);
-        end
-
-    end
+%     if( mod(n,5) == 1 )
+%         
+%         for k=1:n_sample
+%             % C_2(:,:,k) = C_2(:,:,k) + v(:,:) * fft_coeff(n,k);
+%             
+%             C_2_dxv(:,:,k) = C_2_dxv(:,:,k) + strain_dxv(:,:) * fft_coeff(n,k);
+%             C_2_dzv(:,:,k) = C_2_dzv(:,:,k) + strain_dzv(:,:) * fft_coeff(n,k);
+%         end
+% 
+%     end
     
 end
 
