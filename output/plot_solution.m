@@ -5,8 +5,8 @@ clear all
 type = 'structure';
 
 % measurement = 'log_a';
-measurement = 'cc';
-% measurement = 'wd';
+% measurement = 'cc';
+measurement = 'wd';
 % measurement = 'amp_diff';
 % measurement = 'wd_75_75_30';
 % measurement = 'wd_150_150_50';
@@ -15,9 +15,9 @@ folder_0 = '~/Desktop/inversion';
 % folder_1 = 'true_structure';
 % folder_1 = 'homog_structure';
 
-folder_1 = 'true_source';
+% folder_1 = 'true_source';
 % folder_1 = 'source_from_log_a';
-% folder_1 = 'homog_source';
+folder_1 = 'homog_source';
 
 n_models = length( dir([folder_0 '/' type '/' folder_1 '/' measurement '/model_*']) );
 x_1 = load([folder_0 '/' type '/' folder_1 '/' measurement '/model_1']);
@@ -28,7 +28,7 @@ x_3 = load([folder_0 '/' type '/' folder_1 '/' measurement '/model_' num2str(n_m
 load('../output/interferometry/array_16_ref_big_test1.mat')
 
 if( strcmp(type,'source') )
-    load('../inversion/true_source.mat')
+    load('../inversion/models/true_source.mat')
     target = source_dist;
     
     z_limits = [-2.0 4.0];
@@ -36,7 +36,7 @@ if( strcmp(type,'source') )
     array_level = 3.8;
     
 elseif( strcmp(type,'structure') )
-    load('../inversion/true_mu.mat')
+    load('../inversion/models/true_mu.mat')
     target = mu;
     
     z_limits = [4.1 5.5]*1e10;
@@ -48,7 +48,7 @@ end
 % angle = [-38 30];
 angle = [0 90];
 
-rows = 1;
+rows = 2;
 columns = 4;
 
 place = [2, 3, 4];
@@ -136,41 +136,41 @@ view(angle)
 
 
 %% plot gradients
-% s6 = subplot(2,4,6);
-% hold on
-% mesh(X,Z,reshape(-x_1.gn,nx,nz)')
-% m_1 = max(max(abs(x_1.gn)));
-% shading interp
-% grid on
-% axis square
-% zlim([-m_1 m_1])
-% colormap(cm)
-% caxis([-m_1 m_1])
-% view(angle)
-% colorbar('Location','SouthOutside')
-% 
-% s7 = subplot(2,4,7);
-% hold on
-% mesh(X,Z,reshape(-x_2.gn,nx,nz)')
-% m_2 = max(max(abs(x_2.gn)));
-% shading interp
-% grid on
-% axis square
-% zlim([-m_2 m_2])
-% colormap(cm)
-% caxis([-m_2 m_2])
-% view(angle)
-% colorbar('Location','SouthOutside')
-% 
-% s8 = subplot(2,4,8);
-% hold on
-% mesh(X,Z,reshape(-x_3.gn,nx,nz)')
-% m_2 = max(max(abs(x_3.gn)));
-% shading interp
-% grid on
-% axis square
-% zlim([-m_2 m_2])
-% colormap(cm)
-% caxis([-m_2 m_2])
-% view(angle)
-% colorbar('Location','SouthOutside')
+s6 = subplot(2,4,6);
+hold on
+mesh(X,Z,reshape(-x_1.gn,nx,nz)')
+m_1 = max(max(abs(x_1.gn)));
+shading interp
+grid on
+axis square
+zlim([-m_1 m_1])
+colormap(cm)
+caxis([-m_1 m_1])
+view(angle)
+colorbar('Location','SouthOutside')
+
+s7 = subplot(2,4,7);
+hold on
+mesh(X,Z,reshape(-x_2.gn,nx,nz)')
+m_2 = max(max(abs(x_2.gn)));
+shading interp
+grid on
+axis square
+zlim([-m_2 m_2])
+colormap(cm)
+caxis([-m_2 m_2])
+view(angle)
+colorbar('Location','SouthOutside')
+
+s8 = subplot(2,4,8);
+hold on
+mesh(X,Z,reshape(-x_3.gn,nx,nz)')
+m_2 = max(max(abs(x_3.gn)));
+shading interp
+grid on
+axis square
+zlim([-m_2 m_2])
+colormap(cm)
+caxis([-m_2 m_2])
+view(angle)
+colorbar('Location','SouthOutside')
