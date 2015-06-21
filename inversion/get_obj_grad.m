@@ -29,14 +29,13 @@ function [f,g] = get_obj_grad(x)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
     
     % initialize variables
-    path(path,genpath('../'))
     [~,~,nx,nz] = input_parameters();
    
     % redirect optimization variable x and initialize kernel structures
     if( strcmp(type,'source') )
         source_dist = x;
         
-        % load('true_mu.mat')
+        % load('models/true_mu.mat')
         mu = 4.8e10*ones(nx*nz,1);
         
         f_sample = input_interferometry();
@@ -44,8 +43,8 @@ function [f,g] = get_obj_grad(x)
         
     elseif( strcmp(type,'structure') )
         % source_dist = ones(nx*nz,1);
-        % load('source_log_a.mat')
-        load('true_source.mat')
+        % load('models/source_log_a.mat')
+        load('models/true_source.mat')
         
         mu = 4.8e10 * (1+x);
         
