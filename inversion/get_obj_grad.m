@@ -5,18 +5,18 @@ function [f, g, c_all] = get_obj_grad(x)
 % user input
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
-    type = 'source';
-    % type = 'structure';
+    % type = 'source';
+    type = 'structure';
 
-    measurement = 1;
+    measurement = 4;
     % 1 = 'log_amplitude_ratio';
     % 2 = 'amplitude_difference';
     % 3 = 'waveform_difference';
     % 4 = 'cc_time_shift';
     
     % load array with reference stations and data
-    load('../output/interferometry/array_16_ref_big_test1.mat');
-    load('../output/interferometry/data_16_ref_big_test1.mat');
+    load('../output/interferometry/array_16_ref_uniform_blob20.mat');
+    load('../output/interferometry/data_16_ref_uniform_blob20.mat');
     
     % design filter for smoothing of kernel
     % myfilter = fspecial('gaussian',[40 40], 20);
@@ -42,9 +42,9 @@ function [f, g, c_all] = get_obj_grad(x)
         K_all = zeros(nx, nz, length(f_sample));
         
     elseif( strcmp(type,'structure') )
-        % source_dist = ones(nx*nz,1);
+        source_dist = ones(nx*nz,1);
         % load('models/source_log_a.mat')
-        load('models/true_source.mat')
+        % load('models/true_source.mat')
         
         mu = 4.8e10 * (1+x);
         

@@ -1,23 +1,23 @@
 
 clear all
 
-% type = 'source';
-type = 'structure';
+type = 'source';
+% type = 'structure';
 
 % measurement = 'log_a';
 % measurement = 'cc';
-measurement = 'wd';
-% measurement = 'amp_diff';
+% measurement = 'wd';
+measurement = 'amp_diff';
 % measurement = 'wd_75_75_30';
 % measurement = 'wd_150_150_50';
 
-folder_0 = '~/Desktop/inversion';
+folder_0 = '~/Desktop/inversion/uniform_blob3/';
 % folder_1 = 'true_structure';
-% folder_1 = 'homog_structure';
+folder_1 = 'homog_structure';
 
 % folder_1 = 'true_source';
 % folder_1 = 'source_from_log_a';
-folder_1 = 'homog_source';
+% folder_1 = 'homog_source';
 
 n_models = length( dir([folder_0 '/' type '/' folder_1 '/' measurement '/model_*']) );
 x_1 = load([folder_0 '/' type '/' folder_1 '/' measurement '/model_1']);
@@ -25,7 +25,7 @@ x_1 = load([folder_0 '/' type '/' folder_1 '/' measurement '/model_1']);
 x_2 = load([folder_0 '/' type '/' folder_1 '/' measurement '/model_' num2str(ceil(n_models/2))]);
 x_3 = load([folder_0 '/' type '/' folder_1 '/' measurement '/model_' num2str(n_models)]);
 
-load('../output/interferometry/array_16_ref_big_test1.mat')
+load('../output/interferometry/array_16_ref_uniform_blob20.mat')
 
 if( strcmp(type,'source') )
     load('../inversion/models/true_source.mat')
