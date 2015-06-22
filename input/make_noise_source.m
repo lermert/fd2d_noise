@@ -18,15 +18,15 @@ function [noise_spectrum, noise_source_distribution] = make_noise_source(source_
     
     %- location and width of a Gaussian 'blob' ----------------------------
     if(strcmp(source_type,'gaussian'))
-%         x_sourcem = 0.8e5;
-%         z_sourcem = 2.0e5;
-%         sourcearea_width = 0.4e5;
-%         strength = 3.0;
+        % x_sourcem = 0.8e5;
+        % z_sourcem = 2.0e5;
+        % sourcearea_width = 0.4e5;
+        % strength = 3.0;
 
         x_sourcem = 0.5e6;
         z_sourcem = 0.8e6;
         sourcearea_width = 2.0e5;
-        strength = 20.0;
+        strength = 3.0;
 
     %- ring of sources ----------------------------------------------------
     elseif(strcmp(source_type,'ring'))
@@ -37,7 +37,8 @@ function [noise_spectrum, noise_source_distribution] = make_noise_source(source_
         angle_cover = 60.0;
         taper_width = 20.0;
         taper_strength = 100;
-        
+    
+    %- picture translated sources -----------------------------------------
     elseif(strcmp(source_type,'picture'))
         filename = 'source.png';
         
@@ -45,7 +46,7 @@ function [noise_spectrum, noise_source_distribution] = make_noise_source(source_
 
     
     % get configuration
-    load('../output/interferometry/array_16_ref_big_test1.mat')
+    load('../output/interferometry/array_16_ref_uniform_blob3.mat')
     f_sample = input_interferometry();
     [Lx,Lz,nx,nz,~,~,~,model_type] = input_parameters();
     [X,Z] = define_computational_domain(Lx,Lz,nx,nz);
@@ -134,7 +135,7 @@ function [noise_spectrum, noise_source_distribution] = make_noise_source(source_
                 caxis([-1.0 1.0])
                 alpha(model,0.5)
             else
-                pcolor(X,Z,(noise_source_distribution(:,:,i)-1)');
+                pcolor(X,Z,(noise_source_distribution(:,:,i))');
                 load cm_psd
                 colormap(cm_psd)
                 caxis([0.0 max(max(max(noise_source_distribution)))])
