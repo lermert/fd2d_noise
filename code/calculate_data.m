@@ -115,8 +115,8 @@ end
 
 
 % save array and data for inversion
-save( sprintf('../output/interferometry/array_%i_ref_big_test1.mat',n_ref), 'array', 'ref_stat')
-save( sprintf('../output/interferometry/data_%i_ref_big_test1.mat',n_ref), 'c_data', 't')
+save( sprintf('../output/interferometry/array_%i_ref_uniform_blob3.mat',n_ref), 'array', 'ref_stat')
+save( sprintf('../output/interferometry/data_%i_ref_uniform_blob3.mat',n_ref), 'c_data', 't')
 
 
 % close matlabpool and clean up path
