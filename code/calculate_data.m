@@ -64,8 +64,8 @@ end
 
 % start matlabpool
 if(strcmp(mode,'cluster'))
-    cluster = parcluster('EulerLSF');
-    % cluster = parcluster('BrutusLSF');
+    cluster = parcluster('EulerLSF8h');
+    % cluster = parcluster('BrutusLSF8h');
     jobid = getenv('LSB_JOBID');
     mkdir(jobid);
     cluster.JobStorageLocation = jobid;
