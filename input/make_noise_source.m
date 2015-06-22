@@ -26,7 +26,7 @@ function [noise_spectrum, noise_source_distribution] = make_noise_source(source_
         x_sourcem = 0.5e6;
         z_sourcem = 0.8e6;
         sourcearea_width = 2.0e5;
-        strength = 10.0;
+        strength = 20.0;
 
     %- ring of sources ----------------------------------------------------
     elseif(strcmp(source_type,'ring'))
@@ -137,7 +137,7 @@ function [noise_spectrum, noise_source_distribution] = make_noise_source(source_
                 pcolor(X,Z,(noise_source_distribution(:,:,i)-1)');
                 load cm_psd
                 colormap(cm_psd)
-                caxis([0.0 11.0])
+                caxis([0.0 max(max(max(noise_source_distribution)))])
                 colorbar
             end
             shading interp
