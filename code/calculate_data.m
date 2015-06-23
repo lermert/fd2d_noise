@@ -69,7 +69,7 @@ if(strcmp(mode,'cluster'))
     jobid = getenv('LSB_JOBID');
     mkdir(jobid);
     cluster.JobStorageLocation = jobid;
-    cluster.SubmitArguments = '-W 8:00 -R "rusage[mem=3072]"';
+    cluster.SubmitArguments = '-W 2:00 -R "rusage[mem=3072]"';
     matlabpool(cluster,16)
 end
 
@@ -115,8 +115,8 @@ end
 
 
 % save array and data for inversion
-save( sprintf('../output/interferometry/array_%i_ref_uniform_blob3.mat',n_ref), 'array', 'ref_stat')
-save( sprintf('../output/interferometry/data_%i_ref_uniform_blob3.mat',n_ref), 'c_data', 't')
+save( sprintf('../output/interferometry/array_%i_ref.mat',n_ref), 'array', 'ref_stat')
+save( sprintf('../output/interferometry/data_%i_ref_uniform_blob100_structure_2.mat',n_ref), 'c_data', 't')
 
 
 % close matlabpool and clean up path
