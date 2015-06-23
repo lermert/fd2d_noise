@@ -1,4 +1,4 @@
-function [mu,rho]=define_material_parameters(nx,nz,model_type)
+function [mu,rho] = define_material_parameters(nx,nz,model_type)
 
 %==========================================================================
 % generate material parameters mu [N/m^2] and rho [kg/m^3]
@@ -82,7 +82,7 @@ elseif (model_type==7)
     mu = ones(nx,nz);
     mu(1:330,:) = 3.675e10;
     mu(331:end,:) = 2.7e10;
-    
+
 elseif (model_type==999)
     
     rho = 3000.0*ones(nx,nz);
@@ -96,26 +96,45 @@ elseif (model_type==999)
     [Lx,Lz,nx,nz] = input_parameters();
     [X,Z] = define_computational_domain(Lx,Lz,nx,nz);
     
+    % first structure: 4.0e9
+    % structure_2: 2.0e9
+    % structure_3: 1.0e9
     for i=1:size(x_sourcem,2)
-        mu = mu + (-1)^i * 4.0e9 * exp( -( (X-x_sourcem(i)).^2 ) / x_width(i)^2 )' .* exp( -( (Z-z_sourcem(i)).^2 ) / z_width(i)^2 )' ;
+        mu = mu + (-1)^i * 2.0e9 * exp( -( (X-x_sourcem(i)).^2 ) / x_width(i)^2 )' .* exp( -( (Z-z_sourcem(i)).^2 ) / z_width(i)^2 )' ;
     end
     
 %     figure(1)
 %     clf
-%     mesh(X,Z,mu')
+%     % mesh(X,Z,mu')
+%     mesh(X,Z,sqrt(mu./rho)')
+%     disp([ num2str( (max(max(sqrt(mu./rho)))-4000)/4000 * 100) ' % perturbation'])
 %     shading interp
 %     axis square
 %     colorbar
 %     cm = cbrewer('div','RdBu',100,'PCHIP');
 %     colormap(cm)
-%     caxis([4.4 5.2]*1e10)
+%     %caxis([4.4 5.2]*1e10)
     
 elseif (strcmp(model_type,'picture') )
     
-    A = imread('../models/rand.png');
+    A = imread('../models/rand_2.png');
     rho = 3000.0 * ones(nx,nz); 
+    mu = 4.8e10 + 4.0e9 * flipud( abs((double(A(:,:))-255)/max(max(abs(double(A)-255)))) )';
     
-    mu = 4.8e10 - ( (600 * sqrt(3e3) + sqrt(4.8e10))^2 - 4.8e10 ) * flipud( abs((double(A(:,:))-255)/max(max(abs(double(A)-255)))) )';
+    [Lx,Lz,nx,nz] = input_parameters();
+    [X,Z] = define_computational_domain(Lx,Lz,nx,nz);
+    
+%     figure(1)
+%     clf
+% %     mesh(X,Z,mu')
+%     mesh(X,Z,sqrt(mu./rho)')
+%     disp([ num2str( (max(max(sqrt(mu./rho)))-4000)/4000 * 100) ' % perturbation'])
+%     shading interp
+%     axis square
+%     colorbar
+%     cm = cbrewer('div','RdBu',100,'PCHIP');
+%     colormap(cm)
+% %     caxis([4.4 5.2]*1e10)
     
 else
     
