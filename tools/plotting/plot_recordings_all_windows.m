@@ -6,7 +6,7 @@
 % color
 % additional relative offset in y direction, usually a=0
 
-function h = plot_recordings_all(u,t,veldis,color,a)
+function h1 = plot_recordings_all_windows(u,t,veldis,color,a,left,right)
 
 % close all
 
@@ -68,7 +68,19 @@ hold on
 for k=1:size(u,1)
     
     m = max(abs(u(k,:)));
-    h = plot(t,spacing*(k-1+a)+u(k,:)/m,color,'LineWidth',1);
+    h1 = plot(t,spacing*(k-1+a)+u(k,:)/m,color,'LineWidth',1);
+    
+    h2 = plot([left(k,1) left(k,1)], [spacing*(k-2+a)+0.5 spacing*(k+a)-0.5],'b--');
+    h3 = plot([right(k,1) right(k,1)], [spacing*(k-2+a)+0.5 spacing*(k+a)-0.5],'b--');
+    
+    tmp = left;
+    left = -right;
+    right = -tmp;
+    clear tmp;
+    
+    h4 = plot([left(k,1) left(k,1)], [spacing*(k-2+a)+0.5 spacing*(k+a)-0.5],'b--');
+    h5 = plot([right(k,1) right(k,1)], [spacing*(k-2+a)+0.5 spacing*(k+a)-0.5],'b--');
+    
     drawnow
     % if mod(k,2)
         % plot(t,spacing*(k-1+a)+u(idx(k),:)/m,color,'LineWidth',1)
@@ -87,5 +99,5 @@ end
 
 xlabel('time [s]','FontSize',20);
 ylabel('normalised traces','FontSize',20);
-set(gca, 'YTick', []);
+% set(gca, 'YTick', []);
 % axis([min(t)-(t(end)-t(1))/5 max(t)+(t(end)-t(1))/10 -1.5 spacing*length(rec_x)+1])
