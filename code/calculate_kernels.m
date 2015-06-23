@@ -66,13 +66,13 @@ for i = 1:size(ref_stat,1)
 
     switch measurement
         case 1
-            misfit = misfit + make_adjoint_sources(c_uniform( (i-1)*nr+1 : i*nr , :), c_data( (i-1)*nr+1 : i*nr , :), t, 'dis', 'log_amplitude_ratio', src, rec, i, flip_sr);
+            misfit = misfit + make_adjoint_sources(c_uniform( (i-1)*nr+1 : i*nr , :), c_data( (i-1)*nr+1 : i*nr , :), t, 'vel', 'log_amplitude_ratio', src, rec, i, flip_sr);
         case 2
-            misfit = misfit + make_adjoint_sources(c_uniform( (i-1)*nr+1 : i*nr , :), c_data( (i-1)*nr+1 : i*nr , :), t, 'dis', 'amplitude_difference', src, rec, i, flip_sr);
+            misfit = misfit + make_adjoint_sources(c_uniform( (i-1)*nr+1 : i*nr , :), c_data( (i-1)*nr+1 : i*nr , :), t, 'vel', 'amplitude_difference', src, rec, i, flip_sr);
         case 3
-            misfit = misfit + make_adjoint_sources(c_uniform( (i-1)*nr+1 : i*nr , :), c_data( (i-1)*nr+1 : i*nr , :), t, 'dis', 'waveform_difference', src, rec, i, flip_sr);
+            misfit = misfit + make_adjoint_sources(c_uniform( (i-1)*nr+1 : i*nr , :), c_data( (i-1)*nr+1 : i*nr , :), t, 'vel', 'waveform_difference', src, rec, i, flip_sr);
         case 4
-            misfit = misfit + make_adjoint_sources(c_uniform( (i-1)*nr+1 : i*nr , :), c_data( (i-1)*nr+1 : i*nr , :), t, 'dis', 'cc_time_shift', src, rec, i, flip_sr);
+            misfit = misfit + make_adjoint_sources(c_uniform( (i-1)*nr+1 : i*nr , :), c_data( (i-1)*nr+1 : i*nr , :), t, 'vel', 'cc_time_shift', src, rec, i, flip_sr);
         otherwise
             error('\nspecify correct measurement!\n\n')
     end
