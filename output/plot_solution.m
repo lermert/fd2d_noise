@@ -4,7 +4,8 @@ clear all
 type = 'source';
 % type = 'structure';
 
-% measurement = 'log_a';
+% measurement = 'log_a/unconstrained/';
+% measurement = 'log_a/';
 % measurement = 'cc';
 % measurement = 'wd';
 measurement = 'amp_diff';
@@ -12,8 +13,8 @@ measurement = 'amp_diff';
 % measurement = 'wd_150_150_50';
 
 folder_0 = '~/Desktop/inversion/uniform_blob3/';
-% folder_1 = 'true_structure';
-folder_1 = 'homog_structure';
+folder_1 = 'true_structure';
+% folder_1 = 'homog_structure/';
 
 % folder_1 = 'true_source';
 % folder_1 = 'source_from_log_a';
@@ -31,7 +32,7 @@ if( strcmp(type,'source') )
     load('../inversion/models/true_source.mat')
     target = source_dist;
     
-    z_limits = [-2.0 4.0];
+    z_limits = [0.0 4.0];
     c_limits = [-2.0 4.0];
     array_level = 3.8;
     
@@ -47,6 +48,7 @@ end
 
 % angle = [-38 30];
 angle = [0 90];
+% angle = [0 0];
 
 rows = 2;
 columns = 4;
@@ -73,7 +75,7 @@ colormap(cm)
 caxis(c_limits)
 title(['true ' type ' model'])
 view(angle)
-% cb = colorbar('Location','southoutside');
+cb = colorbar('Location','southoutside');
 
 s2 = subplot(rows,columns,place(1));
 hold on
@@ -126,12 +128,12 @@ colormap(cm)
 caxis(c_limits)
 view(angle)
 
-% s1Pos = get(s1,'position');
-% s2Pos = get(s2,'position');
-% s3Pos = get(s3,'position');
-% s2Pos(3:4) = [s1Pos(3:4)];
-% set(s2,'position',s2Pos);
 
+s1Pos = get(s1,'position');
+s2Pos = get(s2,'position');
+% s3Pos = get(s3,'position');
+s1Pos(3:4) = [s2Pos(3:4)];
+set(s1,'position',s1Pos);
 
 
 
@@ -174,3 +176,14 @@ colormap(cm)
 caxis([-m_2 m_2])
 view(angle)
 colorbar('Location','SouthOutside')
+
+
+s6Pos = get(s6,'position');
+s7Pos = get(s7,'position');
+s8Pos = get(s8,'position');
+s6Pos(3:4) = [s1Pos(3:4)];
+s7Pos(3:4) = [s1Pos(3:4)];
+s8Pos(3:4) = [s1Pos(3:4)];
+set(s6,'position',s6Pos);
+set(s7,'position',s7Pos);
+set(s8,'position',s8Pos);
