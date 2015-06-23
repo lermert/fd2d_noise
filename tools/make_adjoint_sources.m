@@ -52,10 +52,13 @@ n_receivers = size(rec,1);
 if strcmp(veldis,'vel')
     
     v = zeros(n_receivers,nt);
+    v_0 = zeros(n_receivers,nt);
     for k=1:n_receivers
         v(k,1:nt-1) = diff(u(k,:))/(t(2)-t(1));
+        v_0(k,1:nt-1) = diff(u_0(k,:))/(t(2)-t(1));
     end
     u = v;
+    u_0 = v_0;
     
 end
 
@@ -96,11 +99,8 @@ for n=1:n_receivers
 
     else
         distance = sqrt( (src(1,1) - rec(n,1)).^2 + (src(1,2) - rec(n,2)).^2 );
-        left = distance/4000.0 - 25.0;
-        right = distance/4000.0 + 25.0;
-        
-        % left = -distance/4000.0 - 25.0;
-        % right = -distance/4000.0 + 25.0;
+        left = distance/4000.0 - 27.0;
+        right = distance/4000.0 + 27.0;
         
         if( left < 0 )
             index = find( t==0 );
