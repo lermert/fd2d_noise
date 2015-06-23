@@ -128,6 +128,7 @@ elseif strcmp(simulation_mode,'correlation')
     
     %- initialise noise source locations and spectra
     [noise_spectrum, noise_source_distribution] = make_noise_source('gaussian',make_plots);
+    % [noise_spectrum, noise_source_distribution] = make_noise_source('equal',make_plots);
     n_noise_sources = size(noise_spectrum,2);
     
 end
