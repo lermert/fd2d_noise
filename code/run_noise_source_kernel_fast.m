@@ -3,6 +3,14 @@ function [X,Z,K_s] = run_noise_source_kernel_fast(G_2,mu,stf,adsrc)
 %==========================================================================
 % run simulation to compute sensitivity kernel for noise power-spectral
 % density distribution
+% fast means ready for conversion to mex-files
+%
+% input:
+%--------
+% G_2: Green function of reference station
+% mu [N/m^2]
+% stf: adjoint source time function
+% adsrc: adjoint source positions
 %
 % output:
 %--------

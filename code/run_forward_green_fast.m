@@ -5,6 +5,7 @@ function [G_2] = run_forward_green_fast(mu,src)
 %
 % input:
 %--------
+% mu [N/m^2]
 % src: source, i.e. reference station
 %
 % output:

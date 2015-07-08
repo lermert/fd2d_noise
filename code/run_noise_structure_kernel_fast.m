@@ -3,11 +3,21 @@ function [X,Z,K_rho_final,K_mu_final] = run_noise_structure_kernel_fast(C_2, C_2
 %==========================================================================
 % run simulation to compute sensitivity kernel for rho and mu
 % (only one-sided)
+% fast means ready for conversion to mex-files
+%
+% input:
+%--------
+% C_2: correlation wavefield
+% C_2_dxv & C_2_dzv: strain of correlation wavefield
+% mu [N/m^2]
+% stf: adjoint source time function
+% adsrc: adjoint source positions
 %
 % output:
 %--------
 % X, Z: coordinate axes
-% K_rho: sensitivity kernel
+% K_rho_final: sensitivity kernel for density
+% K_mu_final: sensitivity kernel for mu
 %
 %==========================================================================
 
@@ -115,7 +125,7 @@ K_mu = zeros(nx,nz) + 1i*zeros(nx,nz);
 for k=1:length(w_sample)
     K_rho = K_rho - G_1(:,:,k) .* C_2(:,:,k) * dw;
     
-    % both is still in velocity
+    % both are still in velocity => integreation via 1/w^2
     K_mu(1:nx-1,:) = K_mu(1:nx-1,:) + G_1_dxv(:,:,k) .* C_2_dxv(:,:,k) / w_sample(k)^2 * dw;
     K_mu(:,1:nz-1) = K_mu(:,1:nz-1) + G_1_dzv(:,:,k) .* C_2_dzv(:,:,k) / w_sample(k)^2 * dw;
 end

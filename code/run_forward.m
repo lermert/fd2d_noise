@@ -5,6 +5,14 @@ tic
 %==========================================================================
 % run forward simulation
 %
+% input:
+%--------
+% simulation_mode: 'forward', 'forward_green' or 'correlation'
+% src: source, i.e. the reference station
+% rec: receivers
+% i_ref: number of reference station
+% flip_sr: flip source and receiver, important for structure kernel
+%
 % output:
 %--------
 % u: displacement seismograms
@@ -31,7 +39,7 @@ clear tmp;
 %==========================================================================
 
 %- material and domain ----------------------------------------------------
-[Lx,Lz,nx,nz,dt,nt,order,model_type] = input_parameters();
+[Lx,Lz,nx,nz,dt,nt,order,model_type,source_type] = input_parameters();
 [X,Z,x,z,dx,dz] = define_computational_domain(Lx,Lz,nx,nz);
 [mu,rho] = define_material_parameters(nx,nz,model_type); 
 
@@ -100,12 +108,12 @@ elseif strcmp(simulation_mode,'correlation')
     
     
     %- Fourier transform of the correlation velocity field
-    % C_2 = zeros(nx,nz,length(f_sample)) + 1i*zeros(nx,nz,length(f_sample));
+    C_2 = zeros(nx,nz,length(f_sample)) + 1i*zeros(nx,nz,length(f_sample));
     
     
     %- Fourier transform of strain field
-    % C_2_dxv = zeros(nx-1,nz,length(f_sample)) + 1i*zeros(nx-1,nz,length(f_sample));
-    % C_2_dzv = zeros(nx,nz-1,length(f_sample)) + 1i*zeros(nx,nz-1,length(f_sample));
+    C_2_dxv = zeros(nx-1,nz,length(f_sample)) + 1i*zeros(nx-1,nz,length(f_sample));
+    C_2_dzv = zeros(nx,nz-1,length(f_sample)) + 1i*zeros(nx,nz-1,length(f_sample));
     
     
     %- load frequency-domain Greens function
@@ -127,8 +135,7 @@ elseif strcmp(simulation_mode,'correlation')
         
     
     %- initialise noise source locations and spectra
-    [noise_spectrum, noise_source_distribution] = make_noise_source('gaussian',make_plots);
-    % [noise_spectrum, noise_source_distribution] = make_noise_source('equal',make_plots);
+    [noise_spectrum, noise_source_distribution] = make_noise_source(source_type,make_plots); 
     n_noise_sources = size(noise_spectrum,2);
     
 end
@@ -240,19 +247,19 @@ for n = 1:length(t)
     
     
     %- accumulate Fourier transform of the correlation velocity field -----    
-%     if( mod(n,5) == 1 && strcmp(simulation_mode,'correlation') )
-%         t_fft_start = tic; 
-%         
-%         for k=1:n_sample
-%             % C_2(:,:,k) = C_2(:,:,k) + v(:,:) * exp(-1i*w_sample(k)*t(n))*dt;
-%             % C_2(:,:,k) = C_2(:,:,k) + v(:,:) * fft_coeff(n,k);
-%             
-%             C_2_dxv(:,:,k) = C_2_dxv(:,:,k) + strain_dxv(:,:) * fft_coeff(n,k);
-%             C_2_dzv(:,:,k) = C_2_dzv(:,:,k) + strain_dzv(:,:) * fft_coeff(n,k);
-%         end
-%         
-%         t_fft = t_fft + toc(t_fft_start);
-%     end
+    if( mod(n,5) == 1 && strcmp(simulation_mode,'correlation') )
+        t_fft_start = tic; 
+        
+        for k=1:n_sample
+            % C_2(:,:,k) = C_2(:,:,k) + v(:,:) * exp(-1i*w_sample(k)*t(n))*dt;
+            C_2(:,:,k) = C_2(:,:,k) + v(:,:) * fft_coeff(n,k);
+            
+            C_2_dxv(:,:,k) = C_2_dxv(:,:,k) + strain_dxv(:,:) * fft_coeff(n,k);
+            C_2_dzv(:,:,k) = C_2_dzv(:,:,k) + strain_dzv(:,:) * fft_coeff(n,k);
+        end
+        
+        t_fft = t_fft + toc(t_fft_start);
+    end
     
     
     %- plot velocity field ------------------------------------------------
@@ -279,17 +286,17 @@ end
 
 
 %- store Fourier transformed correlation velocity field -------------------
-% if strcmp(simulation_mode,'correlation')
-%     if( strcmp(flip_sr,'no') )
-%         save(['../output/interferometry/C_2_' num2str(i_ref) '.mat'],'C_2');
-%         save(['../output/interferometry/C_2_dxv_' num2str(i_ref) '.mat'],'C_2_dxv');
-%         save(['../output/interferometry/C_2_dzv_' num2str(i_ref) '.mat'],'C_2_dzv');
-%     else
-%         save(['../output/interferometry/C_2_flip_sr_'  num2str(i_ref) '.mat'],'C_2');
-%         save(['../output/interferometry/C_2_dxv_flip_sr_'  num2str(i_ref) '.mat'],'C_2_dxv');
-%         save(['../output/interferometry/C_2_dzv_flip_sr_'  num2str(i_ref) '.mat'],'C_2_dzv');
-%     end
-% end
+if strcmp(simulation_mode,'correlation')
+    if( strcmp(flip_sr,'no') )
+        save(['../output/interferometry/C_2_' num2str(i_ref) '.mat'],'C_2');
+        save(['../output/interferometry/C_2_dxv_' num2str(i_ref) '.mat'],'C_2_dxv');
+        save(['../output/interferometry/C_2_dzv_' num2str(i_ref) '.mat'],'C_2_dzv');
+    else
+        save(['../output/interferometry/C_2_flip_sr_'  num2str(i_ref) '.mat'],'C_2');
+        save(['../output/interferometry/C_2_dxv_flip_sr_'  num2str(i_ref) '.mat'],'C_2_dxv');
+        save(['../output/interferometry/C_2_dzv_flip_sr_'  num2str(i_ref) '.mat'],'C_2_dzv');
+    end
+end
 
 
 %- displacement seismograms -----------------------------------------------

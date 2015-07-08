@@ -3,11 +3,19 @@ function [X,Z,K_mu_final] = run_noise_mu_kernel_fast(C_2_dxv, C_2_dzv, mu, stf, 
 %==========================================================================
 % run simulation to compute sensitivity kernel for rho and mu
 % (only one-sided)
+% fast means ready for conversion to mex-files
+%
+% input:
+%--------
+% C_2_dxv & C_2_dzv: strain of correlation wavefield
+% mu [N/m^2]
+% stf: adjoint source time function
+% adsrc: adjoint source positions
 %
 % output:
 %--------
 % X, Z: coordinate axes
-% K_rho: sensitivity kernel
+% K_mu_final: sensitivity kernel for mu
 %
 %==========================================================================
 
@@ -46,7 +54,6 @@ f_sample = input_interferometry();
 w_sample = 2*pi*f_sample;
 dw = w_sample(2) - w_sample(1);
 
-% G_1 = zeros(nx,nz,length(f_sample)) + + 1i*zeros(nx,nz,length(f_sample));
 G_1_dxv = zeros(nx-1,nz,length(f_sample)) + 1i*zeros(nx-1,nz,length(f_sample));
 G_1_dzv = zeros(nx,nz-1,length(f_sample)) + 1i*zeros(nx,nz-1,length(f_sample));
             
@@ -95,8 +102,7 @@ for n=1:length(t)
     
     %- accumulate Fourier transform of the velocity field -----------------
     if( mod(n,5) == 1 )
-        for k=1:length(w_sample)
-            % G_1(:,:,k) = G_1(:,:,k) + v(:,:) * exp(-1i*w_sample(k)*t(n)) * dt;            
+        for k=1:length(w_sample)           
             G_1_dxv(:,:,k) = G_1_dxv(:,:,k) + strain_dxv(:,:) * exp(-1i*w_sample(k)*t(n)) * dt;
             G_1_dzv(:,:,k) = G_1_dzv(:,:,k) + strain_dzv(:,:) * exp(-1i*w_sample(k)*t(n)) * dt;
         end
@@ -110,15 +116,10 @@ end
 %==========================================================================
 
 %- accumulate kernel by looping over frequency
-% K_rho = zeros(nx,nz) + 1i*zeros(nx,nz);
 K_mu = zeros(nx,nz) + 1i*zeros(nx,nz);
-for k=1:length(w_sample)
-    % K_rho = K_rho - G_1(:,:,k) .* C_2(:,:,k) * dw;
-    
+for k=1:length(w_sample)   
     K_mu(1:nx-1,:) = K_mu(1:nx-1,:) + G_1_dxv(:,:,k) .* C_2_dxv(:,:,k) / w_sample(k)^2 * dw;
     K_mu(:,1:nz-1) = K_mu(:,1:nz-1) + G_1_dzv(:,:,k) .* C_2_dzv(:,:,k) / w_sample(k)^2 * dw;
 end
-
-% K_rho_final = real(K_rho);
 K_mu_final = real(K_mu);
 

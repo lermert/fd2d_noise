@@ -4,6 +4,11 @@ function [X,Z,K_s] = run_noise_source_kernel(simulation_mode,i_ref)
 % run simulation to compute sensitivity kernel for noise power-spectral
 % density distribution
 %
+% input:
+%--------
+% simulation_mode: 'noise_source_kernel'
+% i_ref: number of reference station
+%
 % output:
 %--------
 % X, Z: coordinate axes
