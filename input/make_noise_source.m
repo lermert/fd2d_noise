@@ -53,6 +53,7 @@ function [noise_spectrum, noise_source_distribution] = make_noise_source(source_
     [width] = absorb_specs();
 
     
+    
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % source spectrum
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -62,22 +63,23 @@ function [noise_spectrum, noise_source_distribution] = make_noise_source(source_
     for i=1:n_noise_sources
         noise_spectrum(:,i) = 1/(1-i+1)*exp(-(abs(f_sample)-f_peak(i)).^2/bandwidth(i)^2);
 
-%         if ( strcmp(make_plots,'yes') )
-%             if(i==1)
-%                 figure
-%                 set(gca,'FontSize',12)
-%                 hold on
-%                 cstring = [];
-%             end
-%             
-%             plot(f_sample,noise_spectrum(:,i),'Color',cmap(i,:))
-%             cstring{end+1} = ['source ' num2str(i)];
-%             xlabel('frequency [Hz]');
-%             legend(cstring)
-%         end
+        if ( strcmp(make_plots,'yes') )
+            if(i==1)
+                figure
+                set(gca,'FontSize',12)
+                hold on
+                cstring = [];
+            end
+            
+            plot(f_sample,noise_spectrum(:,i),'Color',cmap(i,:))
+            cstring{end+1} = ['source ' num2str(i)];
+            xlabel('frequency [Hz]');
+            legend(cstring)
+        end
     end
 
 
+    
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % geographic power-spectral density distribution
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -115,17 +117,19 @@ function [noise_spectrum, noise_source_distribution] = make_noise_source(source_
     end
     
     
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % plot noise distribution
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
     for i=1:n_noise_sources
         if ( strcmp(make_plots,'yes') && ~strcmp(source_type,'equal') )
-            overlay = 'yes';
+            overlay = 'no';
             
             figure;
             hold on
             set(gca,'FontSize',12);
             
-            X = X/1000;
-            Z = Z/1000;
             
             if(strcmp(overlay,'yes'))
                 pcolor(X,Z,(noise_source_distribution(:,:,i)-1)'/max(max(max(abs(noise_source_distribution(:,:,i)-1)))));
@@ -150,12 +154,12 @@ function [noise_spectrum, noise_source_distribution] = make_noise_source(source_
             plot([width,width],[width,Lz-width],'k--')
             plot([Lx-width,Lx-width],[width,Lz-width],'k--')
             
-            load('~/Desktop/data/array_16_ref.mat')
+            load('~/Desktop/runs/inversion/data/array_16_ref.mat')
             plot(array(:,1),array(:,2),'ko')
 
             axis equal
-            xlim([0 Lx]/1000)
-            ylim([0 Lz]/1000)
+            xlim([0 Lx])
+            ylim([0 Lz])
             xlabel('x [m]');
             ylabel('z [m]');
             title(sprintf('power-spectral density distribution of noise source %i',i));
