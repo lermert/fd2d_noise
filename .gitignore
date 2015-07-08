@@ -1,10 +1,9 @@
 
 code/mex_functions/codegen
 input/sources/
-# output/interferometry/
-models
+output/interferometry/
 
 
 *~
-# *.mat
+*.mat
 *.mexmaci64
