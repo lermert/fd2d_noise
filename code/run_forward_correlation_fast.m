@@ -1,12 +1,20 @@
-function [displacement_seismograms,t,C_2_dxv,C_2_dzv] = run_forward_correlation_fast(G_2, source_dist, mu, rec)
+function [displacement_seismograms,t,C_2_dxv,C_2_dzv] = run_forward_correlation_fast(G_2, source_dist, mu, rec, mode)
 
 %==========================================================================
-% run forward simulation
+% run forward correlation
+% fast means ready for conversion to mex-files
+%
+% input:
+%--------
+% G_2: Green function of reference station
+% source_dist: source distribution
+% mu [N/m^2]
+% rec: receivers
+% mode: 1 = calculate fourier transform of strain of correlation wavefield
 %
 % output:
 %--------
-% u: displacement seismograms
-% t: time axis
+% G_2: Green function of reference station
 %
 %==========================================================================
 
@@ -152,7 +160,7 @@ for n = 1:length(t)
     
     
     %- accumulate Fourier transform of the correlation velocity field -----    
-    if( mod(n,5) == 1 )
+    if( mode == 1 && mod(n,5) == 1 )
         
         for k=1:n_sample
             % C_2(:,:,k) = C_2(:,:,k) + v(:,:) * fft_coeff(n,k);

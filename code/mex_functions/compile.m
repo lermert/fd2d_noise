@@ -10,12 +10,15 @@ i2 = coder.typeof(zeros(2,2),[inf,inf],1);
 % src, rec
 i3 = coder.typeof(zeros(2,2),[inf,2],1);
 
+% integer switch
+i4 = coder.typeof(1,1,0);
+
 
 % run_forward_green_fast(mu,src)
 codegen run_forward_green_fast.m -args {i2,i3}
 
 % run_forward_correlation_fast(G_2, source_dist, mu, rec)
-codegen run_forward_correlation_fast.m -args {i1,i2,i2,i3}
+codegen run_forward_correlation_fast.m -args {i1,i2,i2,i3,i4}
 
 % run_noise_source_kernel_fast(G_2,mu,stf,adsrc)
 codegen run_noise_source_kernel_fast.m -args {i1,i2,i2,i3}
