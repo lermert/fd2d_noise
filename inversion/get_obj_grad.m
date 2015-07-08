@@ -8,6 +8,18 @@ function [f, g, c_all] = get_obj_grad(x)
     type = 'source';
     % type = 'structure';
 
+    if( strcmp(type,'source') )
+        %%% SPECIFY WHICH STRUCTURE SHOULD BE ASSUMED %%%
+        % load('models/true_mu_structure_2.mat')
+        mu = 4.8e10*ones(nx*nz,1);
+        
+    elseif( strcmp(type,'structure') )
+        %%% SPECIFY WHICH SOURCE SHOULD BE ASSUMED %%%
+        source_dist = ones(nx*nz,1);
+        % load('models/true_source_uniform_blob100.mat')
+        % load('models/source_log_a_uniform_blob3.mat')
+    end
+    
     measurement = 1;
     % 1 = 'log_amplitude_ratio';
     % 2 = 'amplitude_difference';
@@ -22,8 +34,9 @@ function [f, g, c_all] = get_obj_grad(x)
     % myfilter = fspecial('gaussian',[40 40], 20);
     myfilter = fspecial('gaussian',[75 75], 30);
     % myfilter = fspecial('gaussian',[100 100], 40);
- 
-
+        
+    
+    
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % calculate misfit and gradient
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
@@ -31,23 +44,15 @@ function [f, g, c_all] = get_obj_grad(x)
     % initialize variables
     [~,~,nx,nz,dt,nt] = input_parameters();
    
+    
     % redirect optimization variable x and initialize kernel structures
     if( strcmp(type,'source') )
         source_dist = x;
-        
-        % load('models/true_mu_structure_2.mat')
-        mu = 4.8e10*ones(nx*nz,1);
-        
         f_sample = input_interferometry();
         K_all = zeros(nx, nz, length(f_sample));
         
     elseif( strcmp(type,'structure') )
-        source_dist = ones(nx*nz,1);
-        % load('models/true_source_uniform_blob100.mat')
-        % load('models/source_log_a_uniform_blob3.mat')
-        
         mu = 4.8e10 * (1+x);
-        
         K_all = zeros(nx, nz);
     end
     
@@ -127,19 +132,23 @@ function [f, g, c_all] = get_obj_grad(x)
     
     fprintf('misfit: %f\n',f)
     
+    
     % reorganize correlation vector
     c_all = zeros(n_ref*n_rec,length(t));
     for i = 1:n_ref
         c_all( (i-1)*n_rec + 1 : i*n_rec, :) = c_it(i,:,:);
     end
     
+    
     % sum frequencies of source kernel
     if( strcmp(type,'source') )
         K_all = sum( K_all, 3 );
     end
     
+    
     % smooth final kernel
     K_all = imfilter( K_all, myfilter, 'symmetric' );
+    
     
     % reshape kernel to column vector 
     if( strcmp(type,'source') )

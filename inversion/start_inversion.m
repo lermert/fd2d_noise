@@ -8,8 +8,8 @@ mode = 'monch';
 % mode = 'euler';
 % mode = 'brutus';
 
-% type = 'source';
-type = 'source_constrained';
+type = 'source';
+% type = 'source_constrained';
 % type = 'structure';
 
 
@@ -20,7 +20,6 @@ type = 'source_constrained';
 % start matlabpool and set up path
 if( strcmp(mode,'monch') )
     addpath(genpath('../'))
-    addpath(genpath('/mnt/lnec/sagerk/matlab'))
     
     jobid = getenv('SLURM_JOB_ID');
     mkdir(jobid);
@@ -85,6 +84,5 @@ save('../output/solution.mat', 'x', 'c_final')
 if( ~strcmp(mode,'local') )
     delete(parobj)
     rmpath(genpath('../'))
-    rmpath(genpath('/mnt/lnec/sagerk/matlab'))
 end
 
