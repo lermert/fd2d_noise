@@ -101,11 +101,7 @@ for n=1:n_receivers
     if strcmp(measurement,'waveform_difference')
         [misfit_n,adstf(n,:)] = waveform_difference(u_sel,u_0_sel,t);
         
-<<<<<<< HEAD
-    elseif strcmp(measurement,'cc_time_shift')        
-=======
     elseif strcmp(measurement,'cc_time_shift')       
->>>>>>> structure_kernel
         [misfit_n_caus,adstf_caus(1,:)] = cc_time_shift(u_sel,u_0_sel,t);
         
         tmp = left;
@@ -120,12 +116,8 @@ for n=1:n_receivers
         
         misfit_n = misfit_n_caus + misfit_n_acaus;
         adstf(n,:) = adstf_caus + adstf_acaus;
-        
-<<<<<<< HEAD
-    elseif strcmp(measurement,'amplitude_difference')       
-=======
+
     elseif strcmp(measurement,'amplitude_difference')        
->>>>>>> structure_kernel
         [misfit_n_caus,adstf_caus(1,:)] = amp_diff(u_sel,u_0_sel,t);
         
         tmp = left;
