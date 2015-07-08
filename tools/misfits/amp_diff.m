@@ -1,10 +1,20 @@
-%- compute relative amplitude difference ----------------------------------
+%==========================================================================
+% compute relative amplitude difference
 %
 % function [misfit,adsrc] = amp_diff(u,u_0,t)
 %
+% input:
+%--------
 % u: synthetic displacement seismogram
 % u_0: observed displacement seismogram
 % t: time axis
+%
+% output:
+%--------
+% misfit
+% adstf: adjoint source time function
+%
+%==========================================================================
 
 function [misfit,adstf] = amp_diff(u,u_0,t)
 

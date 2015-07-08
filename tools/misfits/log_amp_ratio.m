@@ -1,3 +1,21 @@
+%==========================================================================
+% compute log amplitude ratio
+%
+% function [misfit,adstf] = log_amp_ratio(u,u_0,win_caus,t)
+%
+% input:
+%--------
+% u: synthetic displacement seismogram
+% u_0: observed displacement seismogram
+% t: time axis
+%
+% output:
+%--------
+% misfit
+% adstf: adjoint source time function
+%
+%==========================================================================
+
 
 function [misfit,adstf] = log_amp_ratio(u,u_0,win_caus,t)
 
@@ -34,7 +52,7 @@ A0 = log( e0_caus/e0_acaus );
 
 % compute misfit
 misfit = 0.5 * ( A - A0 )^2;
-
+% misfit = A0;
 
 % compute adjoint source time function
 de_caus = win_caus.^2 .* u;
@@ -47,3 +65,4 @@ else
 end
 
 adstf = fliplr(adstf);
+
