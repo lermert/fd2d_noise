@@ -3,8 +3,8 @@ clear all
 close all
 
 
-% mode = 'local';
-mode = 'cluster';
+mode = 'local';
+% mode = 'cluster';
 
 
 % define model
@@ -20,32 +20,32 @@ end
 
 
 % define receiver array
-nr_x = 4;
-nr_z = 4;
-array = zeros(nr_x*nr_z,2);
-for i = 1:nr_x
-    for j = 1:nr_z
-        % array( (i-1)*nr_x + j, 1 ) = 4*width + ( i-1 )*(Lx-8*width)/(nr_x-1);
-        % array( (i-1)*nr_z + j, 2 ) = 4*width + ( j-1 )*(Lz-8*width)/(nr_z-1);
-        
-        array( (i-1)*nr_x + j, 1 ) = 0.9e6 + ( i-1 )*0.25e6;
-        array( (i-1)*nr_z + j, 2 ) = 0.6e6 + ( j-1 )*0.25e6;
-    end
-end
-
-% nr_x = 2;
-% nr_z = 1;
+% nr_x = 4;
+% nr_z = 4;
 % array = zeros(nr_x*nr_z,2);
 % for i = 1:nr_x
-%         array( i, 1 ) = Lx/2 + (-1)^i * 0.15*Lx;
-%         % array( i, 1 ) = Lx/2 + (-1)^i * 0.08*Lx - Lx/5;
-%         array( i, 2 ) = Lz/2;
+%     for j = 1:nr_z
+%         % array( (i-1)*nr_x + j, 1 ) = 4*width + ( i-1 )*(Lx-8*width)/(nr_x-1);
+%         % array( (i-1)*nr_z + j, 2 ) = 4*width + ( j-1 )*(Lz-8*width)/(nr_z-1);
+%         
+%         array( (i-1)*nr_x + j, 1 ) = 0.9e6 + ( i-1 )*0.25e6;
+%         array( (i-1)*nr_z + j, 2 ) = 0.6e6 + ( j-1 )*0.25e6;
+%     end
 % end
+
+nr_x = 2;
+nr_z = 1;
+array = zeros(nr_x*nr_z,2);
+for i = 1:nr_x
+        % array( i, 1 ) = Lx/2 + (-1)^i * 0.15*Lx;
+        array( i, 1 ) = Lx/2 + (-1)^i * 0.08*Lx;% - Lx/5;
+        array( i, 2 ) = Lz/2;
+end
 
 
 % select receivers that will be reference stations
-% ref_stat = array(1,:);
-ref_stat = array;
+ref_stat = array(1,:);
+% ref_stat = array;
 
 
 % plot configuration
@@ -64,13 +64,13 @@ end
 
 % start matlabpool
 if(strcmp(mode,'cluster'))
-    cluster = parcluster('EulerLSF8h');
-    % cluster = parcluster('BrutusLSF8h');
+    % cluster = parcluster('EulerLSF8h');
+    cluster = parcluster('BrutusLSF8h');
     jobid = getenv('LSB_JOBID');
     mkdir(jobid);
     cluster.JobStorageLocation = jobid;
     cluster.SubmitArguments = '-W 2:00 -R "rusage[mem=3072]"';
-    matlabpool(cluster,16)
+    parobj = parpool(cluster,16);
 end
 
 
@@ -116,12 +116,12 @@ end
 
 % save array and data for inversion
 save( sprintf('../output/interferometry/array_%i_ref.mat',n_ref), 'array', 'ref_stat')
-save( sprintf('../output/interferometry/data_%i_ref_uniform_blob100_structure_2.mat',n_ref), 'c_data', 't')
+save( sprintf('../output/interferometry/data_%i_ref.mat',n_ref), 'c_data', 't')
 
 
 % close matlabpool and clean up path
 if(strcmp(mode,'cluster'))
-    matlabpool close
+    delete(parobj)
     rmpath(genpath('../'))
 end
 

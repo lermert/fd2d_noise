@@ -18,7 +18,7 @@ measurement = 4;
 % 4 = 'cc_time_shift';
 
 % load receiver array
-load('../output/interferometry/array_1_ref_big_off_center.mat')
+load('../output/interferometry/array_1_ref.mat')
 
 data_independent = 'yes';
 % if 'no', specify .mat file with data
@@ -66,13 +66,13 @@ for i = 1:size(ref_stat,1)
 
     switch measurement
         case 1
-            misfit = misfit + make_adjoint_sources(c_uniform( (i-1)*nr+1 : i*nr , :), c_data( (i-1)*nr+1 : i*nr , :), t, 'vel', 'log_amplitude_ratio', src, rec, i, flip_sr);
+            misfit = misfit + make_adjoint_sources(c_uniform( (i-1)*nr+1 : i*nr , :), c_data( (i-1)*nr+1 : i*nr , :), t, 'dis', 'log_amplitude_ratio', src, rec, i, flip_sr);
         case 2
-            misfit = misfit + make_adjoint_sources(c_uniform( (i-1)*nr+1 : i*nr , :), c_data( (i-1)*nr+1 : i*nr , :), t, 'vel', 'amplitude_difference', src, rec, i, flip_sr);
+            misfit = misfit + make_adjoint_sources(c_uniform( (i-1)*nr+1 : i*nr , :), c_data( (i-1)*nr+1 : i*nr , :), t, 'dis', 'amplitude_difference', src, rec, i, flip_sr);
         case 3
-            misfit = misfit + make_adjoint_sources(c_uniform( (i-1)*nr+1 : i*nr , :), c_data( (i-1)*nr+1 : i*nr , :), t, 'vel', 'waveform_difference', src, rec, i, flip_sr);
+            misfit = misfit + make_adjoint_sources(c_uniform( (i-1)*nr+1 : i*nr , :), c_data( (i-1)*nr+1 : i*nr , :), t, 'dis', 'waveform_difference', src, rec, i, flip_sr);
         case 4
-            misfit = misfit + make_adjoint_sources(c_uniform( (i-1)*nr+1 : i*nr , :), c_data( (i-1)*nr+1 : i*nr , :), t, 'vel', 'cc_time_shift', src, rec, i, flip_sr);
+            misfit = misfit + make_adjoint_sources(c_uniform( (i-1)*nr+1 : i*nr , :), c_data( (i-1)*nr+1 : i*nr , :), t, 'dis', 'cc_time_shift', src, rec, i, flip_sr);
         otherwise
             error('\nspecify correct measurement!\n\n')
     end
@@ -157,8 +157,8 @@ elseif( strcmp(type,'structure') )
         
         % calculate second part of structure kernel
         flip_sr = 'yes';
-        % fprintf('calculate green function\n')
-        % [~,~] = run_forward('forward_green',src,rec,i,flip_sr);
+        fprintf('calculate green function\n')
+        [~,~] = run_forward('forward_green',src,rec,i,flip_sr);
         fprintf('calculate correlation\n')
         [c_uniform_2( (i-1)*nr + 1 : i*nr , :),t] = run_forward('correlation',src,rec,i,flip_sr);
                 
