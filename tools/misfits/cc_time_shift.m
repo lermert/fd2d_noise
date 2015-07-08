@@ -1,13 +1,24 @@
-%- compute cross-correlation time shift -----------------------------------
+%==========================================================================
+% compute cross correlation time shift
 %
-% function [misfit,adsrc]=cc_time_shift(u,u_0,t)
+% function [misfit,adstf] = cc_time_shift(u,u_0,t)
 %
+% input:
+%--------
 % u: synthetic displacement seismogram
 % u_0: observed displacement seismogram
 % t: time axis
+%
+% output:
+%--------
+% misfit
+% adstf: adjoint source time function
+%
+%==========================================================================
 
 function [misfit,adstf] = cc_time_shift(u,u_0,t)
 
+    
 %- compute time shift -----------------------------------------------------
 
 if sum(u_0==0) == length(t)
@@ -16,6 +27,9 @@ else
     [cc,t_cc] = cross_correlation_td(u,u_0,t);
     [~,i_max] = max(cc);
     T = t_cc(i_max);
+    if(abs(T)>3.5)
+        T=0;
+    end
 end
 
 

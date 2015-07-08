@@ -19,7 +19,6 @@ sort=0;
 
 %- read input -------------------------------------------------------------
 
-path(path,'../input/');
 [Lx,Lz,nx,nz,dt,nt,order,model_type] = input_parameters();
 
 %- make distance vector and sort ------------------------------------------

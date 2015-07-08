@@ -1,8 +1,16 @@
-function [X,Z,K_s]=run_noise_source_kernel_fast(G_2,stf,adsrc)
+function [X,Z,K_s] = run_noise_source_kernel_fast(G_2,mu,stf,adsrc)
 
 %==========================================================================
 % run simulation to compute sensitivity kernel for noise power-spectral
 % density distribution
+% fast means ready for conversion to mex-files
+%
+% input:
+%--------
+% G_2: Green function of reference station
+% mu [N/m^2]
+% stf: adjoint source time function
+% adsrc: adjoint source positions
 %
 % output:
 %--------
@@ -19,8 +27,8 @@ function [X,Z,K_s]=run_noise_source_kernel_fast(G_2,stf,adsrc)
 %- material and domain ----------------------------------------------------
 [Lx,Lz,nx,nz,dt,nt,order,model_type] = input_parameters();
 [X,Z,x,z,dx,dz] = define_computational_domain(Lx,Lz,nx,nz);
-[mu,rho] = define_material_parameters(nx,nz,model_type); 
-
+[~,rho] = define_material_parameters(nx,nz,model_type); 
+mu = reshape(mu,nx,nz);
 
 %- time axis --------------------------------------------------------------    
 t = -(nt-1)*dt:dt:(nt-1)*dt;

@@ -46,14 +46,20 @@ l=0;
 ln=1;
 
 % main loop
-while (norm(g)>tol*max(1,nmg0))
+% while (norm(g)>tol*max(1,nmg0))
+while (norm(g)>tol*max(0,nmg0))
  it=it+1;
 
  if(it>max_it)
    return
  end
-
- sig=1;
+ 
+ if(it==1)
+     sig = 16;
+ else
+     sig=1;
+ end
+ 
 % compute BFGS-step s=B*g;
  q=g;
  for j=1:l
@@ -83,10 +89,11 @@ while (norm(g)>tol*max(1,nmg0))
 %xj
 %s
 %g
- [sig,xn,fn,gn]=stepsize_wolfe(xj,s,stg,fg,f,del,theta,1.0);
+ [sig,xn,fn,gn]=stepsize_wolfe(xj,s,stg,fg,f,del,theta,sig);
  % xn=xj-sig*s;
 
  fprintf(1,'it=%3.d   f=%e   ||g||=%e   sig=%6.5f   step=%s\n',it,f,norm(g),sig,step);
+ save(sprintf('model_%i.mat',it),'xn','gn')
  % [fn,gn]=feval(fg,xn);
 %xn
 %gn
@@ -100,9 +107,9 @@ while (norm(g)>tol*max(1,nmg0))
   P(:,ln)=p;
   l=min(l+1,lmax);
   ln=mod(ln,lmax)+1;
-  if l==lmax
-   gak=dtp/(d'*d);
-  end
+  %if l==lmax
+  % gak=dtp/(d'*d);
+  %end
  end
  xj=xn;
  g=gn;

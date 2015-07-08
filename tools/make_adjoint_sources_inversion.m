@@ -1,11 +1,40 @@
+%==========================================================================
+% compute adjoint sources
+%
+% function [misfit,adstf] = make_adjoint_sources_inversion(u,u_0,t,veldis,measurement,src,rec)
+%
+% input:
+%-------
+% u: synthetic displacement seismograms
+% u_0: "observed" displacement seismograms
+% t: time axis
+% veldis: 'dis' for displacements, 'vel' for velocities
+% measurement:  'log_amplitude_ratio'
+%               'amplitude_difference'
+%               'waveform_difference' 
+%               'cc_time_shift'
+% src: source position
+% rec: receiver positions
+% i_ref: number of reference station
+% flip_sr: flip source and receiver, important for structure kernel
+%
+% output:
+%-------
+% misfit: cumulative misfit for all receivers
+% adstf: adjoint source time functions for each receiver
+%
+%
+% When u_0, i.e. the observed displacement seismograms, are set to zero, 
+% the code performs data-independent measurements. 
+% 
+%==========================================================================
+
 
 function [misfit,adstf] = make_adjoint_sources_inversion(u,u_0,t,veldis,measurement,src,rec)
 
 %==========================================================================
 %- initialisations --------------------------------------------------------
 %==========================================================================
-
-path(path,genpath('../'))
 
 nt = length(t);
 dt = t(2) - t(1);
@@ -15,12 +44,15 @@ n_receivers = size(rec,1);
 if strcmp(veldis,'vel')
     
     v = zeros(n_receivers,nt);
+    v_0 = zeros(n_receivers,nt);
     
     for k=1:n_receivers
         v(k,1:nt-1) = diff(u(k,:))/(t(2)-t(1));
+        v_0(k,1:nt-1) = diff(u_0(k,:))/(t(2)-t(1));
     end
    
     u = v;
+    u_0 = v_0;
     
 end
 
@@ -34,10 +66,10 @@ adstf = zeros(n_receivers,nt);
 for n=1:n_receivers
    
     %- select time windows and taper seismograms --------------------------   
-%     disp('select left window');
-%     [left,~] = ginput(1)
-%     disp('select_right_window');
-%     [right,~] = ginput(1)
+    % disp('select left window');
+    % [left,~] = ginput(1)
+    % disp('select_right_window');
+    % [right,~] = ginput(1)
 
     if strcmp(measurement,'waveform_difference')
         left = t(1);
@@ -45,13 +77,15 @@ for n=1:n_receivers
     
     else        
         distance = sqrt( (src(1,1) - rec(n,1)).^2 + (src(1,2) - rec(n,2)).^2 );
-        left = distance/4000.0 - 25.0;
-        right = distance/4000.0 + 25.0;
+        left = distance/4000.0 - 27.0;
+        right = distance/4000.0 + 27.0;
         
         if( left < 0 )
             index = find( t==0 );
             left = t(index+1);
-        elseif( right > t(end) )
+        end
+        
+        if( right > t(end) )
             right = t(end);
         end
         
@@ -67,7 +101,11 @@ for n=1:n_receivers
     if strcmp(measurement,'waveform_difference')
         [misfit_n,adstf(n,:)] = waveform_difference(u_sel,u_0_sel,t);
         
+<<<<<<< HEAD
     elseif strcmp(measurement,'cc_time_shift')        
+=======
+    elseif strcmp(measurement,'cc_time_shift')       
+>>>>>>> structure_kernel
         [misfit_n_caus,adstf_caus(1,:)] = cc_time_shift(u_sel,u_0_sel,t);
         
         tmp = left;
@@ -83,7 +121,11 @@ for n=1:n_receivers
         misfit_n = misfit_n_caus + misfit_n_acaus;
         adstf(n,:) = adstf_caus + adstf_acaus;
         
+<<<<<<< HEAD
     elseif strcmp(measurement,'amplitude_difference')       
+=======
+    elseif strcmp(measurement,'amplitude_difference')        
+>>>>>>> structure_kernel
         [misfit_n_caus,adstf_caus(1,:)] = amp_diff(u_sel,u_0_sel,t);
         
         tmp = left;
@@ -113,7 +155,7 @@ for n=1:n_receivers
     if strcmp(veldis,'vel')
         adstf(n,1:nt-1) = -diff(adstf(n,:))/dt;
     end      
-    
+
     
 end
 

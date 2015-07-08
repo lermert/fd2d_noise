@@ -1,21 +1,24 @@
-function [X,Z,K_rho]=run_noise_structure_kernel(simulation_mode,flip_sr)
+function [X,Z,K_rho,K_mu]=run_noise_structure_kernel(simulation_mode, i_ref, flip_sr)
 
 %==========================================================================
-% run simulation to compute sensitivity kernel for rho (only one-sided)
+% run simulation to compute sensitivity kernel for rho and mu
+% (only one-sided)
+%
+% input:
+%--------
+% simulation_mode: 'noise_structure_kernel'
+% i_ref: number of reference station
+% flip_sr: flip source and receiver, important for structure kernel
 %
 % output:
 %--------
 % X, Z: coordinate axes
-% K_rho: sensitivity kernel
+% K_rho: sensitivity kernel for density
+% K_mu: sensitivity kernel for mu
 %
 %==========================================================================
 
-%==========================================================================
-% set paths and read input
-%==========================================================================
-
-path(path,genpath('../'));
-load cm_velocity;
+cm = cbrewer('div','RdBu',100,'PCHIP');
 
 
 %==========================================================================
@@ -24,9 +27,8 @@ load cm_velocity;
 
 %- material and domain ----------------------------------------------------
 [Lx,Lz,nx,nz,dt,nt,order,model_type] = input_parameters();
-[mu,rho] = define_material_parameters(nx,nz,model_type);
 [X,Z,x,z,dx,dz] = define_computational_domain(Lx,Lz,nx,nz);
-
+[mu,rho] = define_material_parameters(nx,nz,model_type);
 output_specs
 
 
@@ -37,9 +39,9 @@ nt = length(t);
     
 %- read adjoint source locations ------------------------------------------
 if( strcmp(flip_sr,'no') )
-    fid = fopen([adjoint_source_path 'source_locations'],'r');
+    fid = fopen([adjoint_source_path 'source_locations_' num2str(i_ref)],'r');
 else
-    fid = fopen([adjoint_source_path 'source_locations_flip_sr'],'r');
+    fid = fopen([adjoint_source_path 'source_locations_flip_sr_' num2str(i_ref)],'r');
 end
 
 adsrc = zeros(1,1);
@@ -56,13 +58,13 @@ fclose(fid);
 
 %- read adjoint source time functions and reverse time axis ---------------
 ns = size(adsrc,1);
-stf=zeros(ns,nt);
+stf = zeros(ns,nt);
 
 for n=1:ns
     if( strcmp(flip_sr,'no') )
-        fid = fopen([adjoint_source_path '/src_' num2str(n)],'r');
+        fid = fopen([adjoint_source_path '/src_' num2str(i_ref) '_' num2str(n)],'r');
     else
-        fid = fopen([adjoint_source_path '/src_' num2str(n) '_flip_sr'],'r');
+        fid = fopen([adjoint_source_path '/src_' num2str(i_ref) '_' num2str(n) '_flip_sr'],'r');
     end
     
     stf(n,nt:-1:1) = fscanf(fid,'%g',nt);
@@ -83,9 +85,10 @@ f_sample = input_interferometry();
 w_sample = 2*pi*f_sample;
 dw = w_sample(2) - w_sample(1);
 
-G_1 = zeros(nx,nz,length(f_sample));
-K_rho = zeros(nx,nz);
-             
+G_1 = zeros(nx,nz,length(f_sample)) + + 1i*zeros(nx,nz,length(f_sample));
+G_1_strain_dxv = zeros(nx-1,nz,length(f_sample)) + 1i*zeros(nx-1,nz,length(f_sample));
+G_1_strain_dzv = zeros(nx,nz-1,length(f_sample)) + 1i*zeros(nx,nz-1,length(f_sample));
+            
 
 %- dynamic fields and absorbing boundary field ----------------------------
 v = zeros(nx,nz);
@@ -101,8 +104,11 @@ szy = zeros(nx,nz-1);
 % iterate
 %==========================================================================
 
-figure;
-set(gca,'FontSize',20);
+if( strcmp(make_plots,'yes') )
+    figure;
+    set(gca,'FontSize',20);
+end
+
 
 for n=1:length(t)
     
@@ -124,15 +130,20 @@ for n=1:length(t)
     v = v .* absbound;
     
     
-    %- compute derivatives of current velocity and update stress tensor ---   
-    sxy = sxy + dt*mu(1:nx-1,:) .* dx_v(v,dx,dz,nx,nz,order);
-    szy = szy + dt*mu(:,1:nz-1) .* dz_v(v,dx,dz,nx,nz,order);
+    %- compute derivatives of current velocity and update stress tensor ---
+    strain_dxv = dx_v(v,dx,dz,nx,nz,order);
+    strain_dzv = dz_v(v,dx,dz,nx,nz,order);
+    
+    sxy = sxy + dt*mu(1:nx-1,:) .* strain_dxv;
+    szy = szy + dt*mu(:,1:nz-1) .* strain_dzv;
      
     
     %- accumulate Fourier transform of the velocity field -----------------
     if( mod(n,5) == 1 )
         for k=1:length(w_sample)
-            G_1(:,:,k) = G_1(:,:,k) + v(:,:) * exp(-1i*w_sample(k)*t(n)) * dt;
+            G_1(:,:,k) = G_1(:,:,k) + v(:,:) * exp(-1i*w_sample(k)*t(n)) * dt;            
+            G_1_strain_dxv(:,:,k) = G_1_strain_dxv(:,:,k) + strain_dxv(:,:) * exp(-1i*w_sample(k)*t(n)) * dt;
+            G_1_strain_dzv(:,:,k) = G_1_strain_dzv(:,:,k) + strain_dzv(:,:) * exp(-1i*w_sample(k)*t(n)) * dt;
         end
     end
     
@@ -151,18 +162,28 @@ end
 
 %- load Fourier transformed correlation velocity field
 if( strcmp(flip_sr,'no') )
-    load('../output/interferometry/C_2.mat');
+    load(['../output/interferometry/C_2_' num2str(i_ref) '.mat']);    
+    load(['../output/interferometry/C_2_dxv_' num2str(i_ref) '.mat']);
+    load(['../output/interferometry/C_2_dzv_' num2str(i_ref) '.mat']);
 else
-    load('../output/interferometry/C_2_flip_sr.mat');
+    load(['../output/interferometry/C_2_flip_sr_' num2str(i_ref) '.mat']);    
+    load(['../output/interferometry/C_2_dxv_flip_sr_'  num2str(i_ref) '.mat']);
+    load(['../output/interferometry/C_2_dzv_flip_sr_'  num2str(i_ref) '.mat']);
 end
 
 
 %- accumulate kernel by looping over frequency
+K_rho = zeros(nx,nz);
+K_mu = zeros(nx,nz);
 for k=1:length(w_sample)
-    K_rho = K_rho - G_1(:,:,k) .* C_2(:,:,k)*dw;
+    K_rho = K_rho - G_1(:,:,k) .* C_2(:,:,k) * dw;
+    
+    K_mu(1:nx-1,:) = K_mu(1:nx-1,:) + G_1_strain_dxv(:,:,k) .* C_2_dxv(:,:,k) / w_sample(k)^2 * dw;
+    K_mu(:,1:nz-1) = K_mu(:,1:nz-1) + G_1_strain_dzv(:,:,k) .* C_2_dzv(:,:,k) / w_sample(k)^2 * dw;
 end
 
 K_rho = real(K_rho);
+K_mu = real(K_mu);
 
 
 %==========================================================================

@@ -1,6 +1,6 @@
-%- compute cross correlation function -------------------------------------
+%- compute cross correlation function in time domain ----------------------
 %
-% function [cc,t_cc]=cross_correlation(f,g,t)
+% function [cc,t_cc] = cross_correlation_td(f,g,t)
 %
 % cc_i = sum_j f^*(j) g(j+i)
 
