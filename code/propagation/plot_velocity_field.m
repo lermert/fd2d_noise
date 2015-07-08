@@ -37,16 +37,23 @@ if (mod(n,plot_nt)==0)
     end
     
     
-    %- plot source and receiver positions ---------------------------------
-    % if ( ~strcmp(simulation_mode,'noise_source_kernel') && ~strcmp(simulation_mode,'noise_source_kernel') )
-    %     for k=1:size(src,1)
-    %         plot(src(k,1),src(k,2),'kx')
-    %     end
-    %     
-    %     for k=1:size(rec,1)
-    %         plot(rec(k,1),rec(k,2),'ko')
-    %     end
-    % end
+    %- plot source and receiver0 positions --------------------------------
+    if ( ~strcmp(simulation_mode,'forward') || ~strcmp(simulation_mode,'forward_green') || ~strcmp(simulation_mode,'correlation') )
+        for k=1:size(adsrc,1)
+            plot(src(k,1),src(k,2),'kx')
+        end
+        
+        for k=1:size(rec,1)
+            plot(src(k,1),src(k,2),'ko')
+        end
+    end
+    
+    %- plot adjoint source positions --------------------------------------
+    if ( ~strcmp(simulation_mode,'noise_source_kernel') || ~strcmp(simulation_mode,'noise_source_kernel') )
+        for k=1:size(adsrc,1)
+            plot(adsrc(k,1),adsrc(k,2),'kx')
+        end
+    end
        
     
     %- record movie -------------------------------------------------------
