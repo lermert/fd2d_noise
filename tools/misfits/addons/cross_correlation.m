@@ -1,6 +1,6 @@
 %- compute cross correlation function -------------------------------------
 %
-% function [cc,t_cc]=cross_correlation(f,g,t)
+% function [cc,t_cc] = cross_correlation(f,g,t)
 %
 % cc_i = sum_j f^*(j) g(j+i)
 
