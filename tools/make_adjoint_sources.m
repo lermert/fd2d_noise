@@ -1,23 +1,35 @@
 %==========================================================================
 % compute and store adjoint sources
 %
-% function misfit=make_adjoint_sources(u,u_0,t,mode)
+% function misfit = make_adjoint_sources(u, u_0, t, veldis, measurement, src, rec, i_ref, flip_sr)
 %
 % input:
 %-------
 % u: synthetic displacement seismograms
-% u_0: observed displacement seismograms
+% u_0: "observed" displacement seismograms
 % t: time axis
 % veldis: 'dis' for displacements, 'vel' for velocities
-% measurement:  'waveform_difference' for L2 waveform difference
-%               'cc_time_shift' for cross-correlation time shift
+% measurement:  'log_amplitude_ratio'
+%               'amplitude_difference'
+%               'waveform_difference' 
+%               'cc_time_shift'
+% src: source position
+% rec: receiver positions
+% i_ref: number of reference station
+% flip_sr: flip source and receiver, important for structure kernel
+%
+% output:
+%-------
+% misfit: cumulative misfit of all receivers
+%
 %
 % When u_0, i.e. the observed displacement seismograms, are set to zero, 
 % the code performs data-independent measurements. 
 % 
 %==========================================================================
 
-function misfit = make_adjoint_sources(u,u_0,t,veldis,measurement,src,rec,i_ref,flip_sr)
+
+function misfit = make_adjoint_sources(u, u_0, t, veldis, measurement, src, rec, i_ref, flip_sr)
 
 %==========================================================================
 %- initialisations --------------------------------------------------------
@@ -88,10 +100,10 @@ for n=1:n_receivers
    
     
     %- select time windows and taper seismograms --------------------------   
-%     disp('select left window');
-%     [left,~] = ginput(1)
-%     disp('select_right_window');
-%     [right,~] = ginput(1)
+    % disp('select left window');
+    % [left,~] = ginput(1)
+    % disp('select_right_window');
+    % [right,~] = ginput(1)
     
     if strcmp(measurement,'waveform_difference')
         left = t(1);
