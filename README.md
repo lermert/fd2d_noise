@@ -114,3 +114,10 @@ STEP 2: Compute kernel for the reference station
 * You can plot the kernel with “pcolor(X,Z,K_rho’)”.
 
 STEP 3: Repeat the same procedure with source (reference station) and receiver (target station) interchanged. Then add both kernels to obtain the complete kernel.
+
+
+
+CONTRIBUTIONS
+--------------------------------------------------------------------------------------
+
+Contributions are always welcome. To contribute to our code, create your own fork, modify it, run git rebase, upload it and send us a pull request.
