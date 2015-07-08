@@ -27,7 +27,7 @@ del=0.001;
 % constant del<theta<1 for Wolfe condition
 theta=0.6;
 
-sig = 1;
+sig = 0.250;
 
 verbose = true;
 
