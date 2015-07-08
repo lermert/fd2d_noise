@@ -33,3 +33,4 @@ rmpath(genpath('../../'))
 clear i1
 clear i2
 clear i3
+clear i4
