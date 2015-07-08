@@ -134,11 +134,8 @@ for n=1:n_receivers
     if strcmp(measurement,'waveform_difference')
         [misfit_n,adstf(n,:)] = waveform_difference(u_sel,u_0_sel,t);
         
-<<<<<<< HEAD
-    elseif strcmp(measurement,'cc_time_shift')       
-=======
+
     elseif strcmp(measurement,'cc_time_shift')
->>>>>>> structure_kernel
         [misfit_n_caus,adstf_caus(1,:)] = cc_time_shift(u_sel,u_0_sel,t);
         
         tmp = left;
@@ -149,20 +146,11 @@ for n=1:n_receivers
         u_sel = taper(u(n,:),t,left,right,width);
         u_0_sel = taper(u_0(n,:),t,left,right,width);
         
-<<<<<<< HEAD
         [misfit_n_acaus,adstf_acaus(1,:)] = cc_time_shift(u_sel,u_0_sel,t);
-        
-        misfit_n = misfit_n_caus + misfit_n_acaus;
-        adstf(n,:) = adstf_caus + adstf_acaus;
-        
-    elseif strcmp(measurement,'amplitude_difference')
-=======
-        [misfit_n_acaus,adstf_acaus(1,:)] = cc_time_shift(u_sel,u_0_sel,t);        
         misfit_n = misfit_n_caus + misfit_n_acaus;
         adstf(n,:) = adstf_caus + adstf_acaus;
         
     elseif strcmp(measurement,'amplitude_difference')        
->>>>>>> structure_kernel
         [misfit_n_caus,adstf_caus(1,:)] = amp_diff(u_sel,u_0_sel,t);
         
         tmp = left;
@@ -173,12 +161,7 @@ for n=1:n_receivers
         u_sel = taper(u(n,:),t,left,right,width);
         u_0_sel = taper(u_0(n,:),t,left,right,width);
         
-<<<<<<< HEAD
         [misfit_n_acaus,adstf_acaus(1,:)] = amp_diff(u_sel,u_0_sel,t);
-        
-=======
-        [misfit_n_acaus,adstf_acaus(1,:)] = amp_diff(u_sel,u_0_sel,t);        
->>>>>>> structure_kernel
         misfit_n = misfit_n_caus + misfit_n_acaus;
         adstf(n,:) = adstf_caus + adstf_acaus;
         
