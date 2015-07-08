@@ -4,7 +4,7 @@
 while true; do
     read -p "Do conversion to mex-functions? " yn
     case $yn in
-        [Yy]* ) cd ../code/mex_functions; rm -f run_*; matlab -nodisplay < compile.m; cd ../../inversion; break;;
+        [Yy]* ) cd ../code/mex_functions; rm -f run_*; matlab -nodisplay < compile_all.m; cd ../../inversion; break;;
         [Nn]* ) break;;
         * ) echo "Please answer yes or no.";;
     esac
