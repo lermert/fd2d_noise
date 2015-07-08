@@ -3,15 +3,18 @@ clear all
 close all
 
 
-mode = 'local';
-% mode = 'cluster';
+% mode = 'local'
+mode = 'monch';
+% mode = 'euler';
+% mode = 'brutus';
 
 
-% define model
+%% define model
 addpath(genpath('../'))
-[Lx,Lz,nx,nz,dt,nt,order,model_type] = input_parameters();
+[Lx,Lz,nx,nz,dt,nt,order,model_type,source_type] = input_parameters();
 [X,Z,x,z,dx,dz] = define_computational_domain(Lx,Lz,nx,nz);
 [mu,rho] = define_material_parameters(nx,nz,model_type); 
+[~,source_dist] = make_noise_source(source_type,make_plots);
 [width] = absorb_specs();
 output_specs
 if(strcmp(mode,'cluster'))
@@ -19,7 +22,7 @@ if(strcmp(mode,'cluster'))
 end
 
 
-% define receiver array
+%% define receiver array
 % nr_x = 4;
 % nr_z = 4;
 % array = zeros(nr_x*nr_z,2);
@@ -43,12 +46,12 @@ for i = 1:nr_x
 end
 
 
-% select receivers that will be reference stations
+%% select receivers that will be reference stations
 ref_stat = array(1,:);
 % ref_stat = array;
 
 
-% plot configuration
+%% plot configuration
 if( strcmp(make_plots,'yes') )
     figure
     hold on
@@ -62,19 +65,41 @@ if( strcmp(make_plots,'yes') )
 end
 
 
-% start matlabpool
-if(strcmp(mode,'cluster'))
-    % cluster = parcluster('EulerLSF8h');
-    cluster = parcluster('BrutusLSF8h');
+%% start matlabpool and set up path
+if( strcmp(mode,'monch') )
+    addpath(genpath('../'))
+    
+    jobid = getenv('SLURM_JOB_ID');
+    mkdir(jobid);
+    cluster = parallel.cluster.Generic('JobStorageLocation', jobid);
+    set(cluster, 'HasSharedFilesystem', true);
+    set(cluster, 'ClusterMatlabRoot', '/apps/common/matlab/r2015a/');
+    set(cluster, 'OperatingSystem', 'unix');
+    set(cluster, 'IndependentSubmitFcn', @independentSubmitFcn);
+    set(cluster, 'CommunicatingSubmitFcn', @communicatingSubmitFcn);
+    set(cluster, 'GetJobStateFcn', @getJobStateFcn);
+    set(cluster, 'DeleteJobFcn', @deleteJobFcn);
+
+    parobj = parpool(cluster,16);
+    
+elseif( strcmp(mode,'euler') || strcmp(mode,'brutus') )
+    addpath(genpath('../'))
+    if( strcmp(mode,'euler') )
+        cluster = parcluster('EulerLSF8h');
+    elseif( strcmp(mode,'brutus') )
+        cluster = parcluster('BrutusLSF8h');
+    end
+        
     jobid = getenv('LSB_JOBID');
     mkdir(jobid);
     cluster.JobStorageLocation = jobid;
-    cluster.SubmitArguments = '-W 2:00 -R "rusage[mem=3072]"';
+    cluster.SubmitArguments = '-W 12:00 -R "rusage[mem=3072]"';
     parobj = parpool(cluster,16);
+    
 end
 
 
-% calculate correlations
+%% calculate correlations
 n_ref = size(ref_stat,1);
 n_rec = size(array,1)-1;
 t = -(nt-1)*dt:dt:(nt-1)*dt;
@@ -93,8 +118,12 @@ parfor i = 1:n_ref
     rec = array( find(~ismember(array,src,'rows') ) , :);
     
     % calculate the correlation for each pair
-    [~,~] = run_forward('forward_green',src,rec,i,flip_sr);
-    [c_it(i,:,:),~] = run_forward('correlation',src,rec,i,flip_sr);
+    % [~,~] = run_forward('forward_green',src,rec,i,flip_sr);
+    % [c_it(i,:,:),~] = run_forward('correlation',src,rec,i,flip_sr);
+    
+    % use mex-functions
+    [G_2] = run_forward_green_fast_mex(mu, src);
+    [c_it(i,:,:), ~] = run_forward_correlation_fast_mex(G_2, source_dist, mu, rec, 0);
     
 end
 
@@ -106,7 +135,7 @@ for i = 1:n_ref
 end
 
 
-% plot data
+%% plot data
 if( strcmp(make_plots,'yes') )
     figure
     plot_recordings_all(c_data,t,'vel','k-',0);
@@ -114,15 +143,14 @@ if( strcmp(make_plots,'yes') )
 end
 
 
-% save array and data for inversion
+%% save array and data for inversion
 save( sprintf('../output/interferometry/array_%i_ref.mat',n_ref), 'array', 'ref_stat')
 save( sprintf('../output/interferometry/data_%i_ref.mat',n_ref), 'c_data', 't')
 
 
-% close matlabpool and clean up path
+%% close matlabpool and clean up path
 if(strcmp(mode,'cluster'))
     delete(parobj)
     rmpath(genpath('../'))
 end
-
 
