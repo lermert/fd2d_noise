@@ -107,12 +107,12 @@ parfor i = 1:n_ref
     rec = array( find(~ismember(array,src,'rows') ) , :);
     
     % calculate the correlation for each pair
-    [~,~] = run_forward('forward_green',src,rec,i,flip_sr);
-    [c_it(i,:,:),~] = run_forward('correlation',src,rec,i,flip_sr);
+    % [~,~] = run_forward('forward_green',src,rec,i,flip_sr);
+    % [c_it(i,:,:),~] = run_forward('correlation',src,rec,i,flip_sr);
     
     % use mex-functions
-%     [G_2] = run_forward_green_fast_mex(mu, src);
-%     [c_it(i,:,:), ~] = run_forward_correlation_fast_mex(G_2, source_dist, mu, rec, 0);
+    [G_2] = run_forward_green_fast_mex(mu, src);
+    [c_it(i,:,:), ~] = run_forward_correlation_fast_mex(G_2, source_dist, mu, rec, 0);
     
 end
 
