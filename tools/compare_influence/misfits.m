@@ -1,5 +1,36 @@
+%==========================================================================
+% compute adjoint sources
+%
+% function [misfit_n,adstf] = misfits(u,u_0,t,veldis,measurement,src,rec)
+%
+% input:
+%-------
+% u: synthetic displacement seismograms
+% u_0: "observed" displacement seismograms
+% t: time axis
+% veldis: 'dis' for displacements, 'vel' for velocities
+% measurement:  'log_amplitude_ratio'
+%               'amplitude_difference'
+%               'waveform_difference' 
+%               'cc_time_shift'
+% src: source position
+% rec: receiver positions
+% i_ref: number of reference station
+% flip_sr: flip source and receiver, important for structure kernel
+%
+% output:
+%-------
+% misfit_n: misfit of each receivers
+% adstf: adjoint source time functions for each receiver
+%
+%
+% When u_0, i.e. the observed displacement seismograms, are set to zero, 
+% the code performs data-independent measurements. 
+% 
+%==========================================================================
 
-function [misfit_n,adstf] = make_adjoint_sources_influence(u,u_0,t,veldis,measurement,src,rec)
+
+function [misfit_n,adstf] = misfits(u,u_0,t,veldis,measurement,src,rec)
 
 %==========================================================================
 %- initialisations --------------------------------------------------------
@@ -107,9 +138,6 @@ for n=1:n_receivers
         [misfit_n(n,:),adstf(n,:)] = log_amp_ratio(u(n,:),u_0(n,:),win,t);
         
     end
-    
-    
-    % misfit = misfit + misfit_n;
     
     
     %- correct adjoint source time function for velocity measurement ------    
