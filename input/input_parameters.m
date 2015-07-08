@@ -1,5 +1,5 @@
 
-function [Lx,Lz,nx,nz,dt,nt,order,model_type] = input_parameters()
+function [Lx,Lz,nx,nz,dt,nt,order,model_type,source_type] = input_parameters()
 
 %==========================================================================
 % set basic simulation parameters
@@ -44,4 +44,10 @@ model_type = 999;
 % 7=another layered medium
 % "picture" = put source picture in ../models-folder
 
+
+%==========================================================================
+% source type
+%==========================================================================
+
+source_type = 'gaussian';
 
