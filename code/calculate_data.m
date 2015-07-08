@@ -8,7 +8,6 @@ mode = 'monch';
 % mode = 'euler';
 % mode = 'brutus';
 
-%huhu
 
 %% define model
 addpath(genpath('../'))
