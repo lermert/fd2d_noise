@@ -134,7 +134,6 @@ for n=1:n_receivers
     if strcmp(measurement,'waveform_difference')
         [misfit_n,adstf(n,:)] = waveform_difference(u_sel,u_0_sel,t);
         
-
     elseif strcmp(measurement,'cc_time_shift')
         [misfit_n_caus,adstf_caus(1,:)] = cc_time_shift(u_sel,u_0_sel,t);
         
