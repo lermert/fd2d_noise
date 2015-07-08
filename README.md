@@ -120,4 +120,4 @@ STEP 3: Repeat the same procedure with source (reference station) and receiver (
 CONTRIBUTIONS
 --------------------------------------------------------------------------------------
 
-Contributions are always welcome. To contribute to our code, create your own fork, modify it, run git rebase and send us a pull request.
+Contributions are always welcome. To contribute to our code, create your own fork, modify it, run git rebase, upload it and send us a pull request.
