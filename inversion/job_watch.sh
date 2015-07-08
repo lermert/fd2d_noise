@@ -1,2 +1,2 @@
 
-bpeek -fJ *inversion_cluster
+bpeek -fJ *start_inversion
