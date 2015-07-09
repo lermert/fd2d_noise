@@ -3,8 +3,8 @@ clear all
 close all
 
 
-% mode = 'local'
-mode = 'monch';
+mode = 'local';
+% mode = 'monch';
 % mode = 'euler';
 % mode = 'brutus';
 
@@ -25,8 +25,8 @@ end
 
 
 %% define receiver array
-nr_x = 4;
-nr_z = 4;
+nr_x = 2;
+nr_z = 2;
 array = zeros(nr_x*nr_z,2);
 for i = 1:nr_x
     for j = 1:nr_z        
@@ -96,8 +96,8 @@ c_it = zeros(n_ref,n_rec,length(t));
 
 fprintf('\n')
 flip_sr = 'no';
-parfor i = 1:n_ref
-    
+for i = 1:n_ref
+%parfor    
     if( strcmp(verbose,'yes') )
         fprintf('reference station: %i\n',i)
     end
@@ -107,13 +107,13 @@ parfor i = 1:n_ref
     rec = array( find(~ismember(array,src,'rows') ) , :);
     
     % calculate the correlation for each pair
-    % [~,~] = run_forward('forward_green',src,rec,i,flip_sr);
-    % [c_it(i,:,:),~] = run_forward('correlation',src,rec,i,flip_sr);
+     [~,~] = run_forward('forward_green',src,rec,i,flip_sr);
+     [c_it(i,:,:),~] = run_forward('correlation',src,rec,i,flip_sr);
     
     % use mex-functions
-    [G_2] = run_forward_green_fast_mex(mu, src);
-    [c_it(i,:,:), ~] = run_forward_correlation_fast_mex(G_2, source_dist, mu, rec, 0);
-    
+    %[G_2] = run_forward_green_fast_mex(mu, src);
+    %[c_it(i,:,:), ~] = run_forward_correlation_fast_mex(G_2, source_dist, mu, rec, 0);
+    fprintf('Reference station %g completed',i)
 end
 
 

@@ -32,7 +32,7 @@ order=4;            % finite-difference order (2 or 4)
 % model type
 %==========================================================================
 
-model_type = 999;
+model_type = 1;
 % model_type = 'picture';
 
 % 1=homogeneous 

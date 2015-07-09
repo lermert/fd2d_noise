@@ -25,7 +25,7 @@ function [noise_spectrum, noise_source_distribution] = make_noise_source(source_
 
         x_sourcem = [0.5e6 1.4e6];
         z_sourcem = [0.8e6 1.6e6];
-        sourcearea_width = [2.0e5 2.0e5];
+        sourcearea_width = [2.0e4 2.0e5];
         strength = [100.0 100.0];
 
     %- ring of sources ----------------------------------------------------
